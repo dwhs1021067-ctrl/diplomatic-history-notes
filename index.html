@@ -37,10 +37,47 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 }
 .filters button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
-.dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
-.dot{width:6px;height:6px;border-radius:50%;background:transparent;border:1.5px dashed var(--slate)}
-.dot.core{border:none;background:#C9B98B;border-radius:50%}
-.dot.current{width:9px;height:9px;background:var(--vermillion)!important;border:none!important}
+.header-row{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:18px}
+.menu-btn{
+  position:absolute;left:0;top:2px;width:36px;height:36px;border-radius:8px;
+  border:1px solid var(--line);background:var(--card);display:flex;align-items:center;
+  justify-content:center;font-size:16px;color:var(--ink);
+}
+
+.sidebar-overlay{
+  position:fixed;inset:0;background:rgba(36,31,23,0.4);display:none;z-index:60;
+}
+.sidebar-overlay.on{display:block}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:84%;max-width:340px;background:var(--paper);
+  box-shadow:4px 0 20px rgba(36,31,23,0.25);overflow-y:auto;padding:18px 14px 40px;
+  transform:translateX(-100%);transition:transform 0.22s ease;
+}
+.sidebar-overlay.on .sidebar{transform:translateX(0)}
+.sidebar-title{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:14px;padding:0 4px}
+.acc-item{margin-bottom:8px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--card)}
+.acc-head{
+  width:100%;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;
+  font-size:14px;font-weight:500;color:var(--ink);
+}
+.acc-head .arrow{transition:transform 0.15s;color:var(--slate);font-size:12px}
+.acc-head.open .arrow{transform:rotate(90deg)}
+.acc-body{display:none;padding:2px 0 6px}
+.acc-body.open{display:block}
+.acc-row{
+  display:flex;gap:8px;align-items:baseline;padding:7px 14px;font-size:13px;
+  border-top:1px solid var(--line);
+}
+.acc-row .yr{color:var(--slate);font-size:11.5px;min-width:64px;flex-shrink:0}
+.acc-row .ttl{cursor:pointer;color:var(--ink)}
+.acc-row .ttl:active{color:var(--vermillion)}
+.acc-row.light .dotmark{color:var(--slate)}
+.acc-row .dotmark{margin-right:2px;font-size:10px}
+.cmp-row{padding:9px 14px;border-top:1px solid var(--line);font-size:12.5px}
+.cmp-row .yr{color:var(--gold);font-weight:500;font-size:11.5px;margin-bottom:3px}
+.cmp-row .pair{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.cmp-row .pair span{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:var(--ink)}
+.cmp-row .note{color:var(--slate);line-height:1.5}
 
 .card{
   background:var(--card);border:1px solid var(--line);border-radius:4px;
@@ -269,9 +306,17 @@ var EVENTS = [
     theory:[{label:"現實主義",text:"角度最貼近考古題方向：{{圍堵政策}}的核心邏輯是傳統權力平衡思維在冷戰情境下的延伸，直接對比戰間期對納粹德國姑息政策失敗的教訓。"},{label:"建構主義",text:"角度：鐵幕一詞本身就是一種話語建構，將原本模糊的地緣政治分歧，轉化為清晰的意識形態陣營對立敘事，深刻形塑了往後近半世紀的國際關係認知框架。"},{label:"依賴理論／IPE",text:"角度：馬歇爾計畫展現經濟援助作為地緣政治工具的操作邏輯，援助西歐不僅是人道考量，更是鞏固資本主義陣營經濟穩定、防止共產主義藉經濟蕭條坐大的策略性投資。"},{label:"外交史方法論",text:"角度：杜魯門主義與圍堵政策某種程度上是美國決策者記取一戰後姑息政策教訓、決心及早果斷因應威脅的心理與制度學習過程，可做跨時代的政策學習比較。"}]},
 ];
 
+var COMPARISON = [
+  {noteYear:"1851–1856", zhId:"taiping", zhLabel:"太平天國", westId:"crimean-war", westLabel:"克里米亞戰爭", note:"清廷忙於內戰之際，歐洲列強也正深陷克里米亞戰爭消耗，東西雙方同時經歷內憂外患交織的十年。"},
+  {noteYear:"1871", zhId:"ryukyu", zhLabel:"牡丹社事件與琉球問題", westId:"german-unification", westLabel:"德意志統一戰爭（完成）", note:"同一年，東亞（日本併吞琉球的前哨戰）與歐洲（德意志帝國建立）都邁入了新秩序確立的關鍵年份。"},
+  {noteYear:"1884–1885", zhId:"sino-french-war", zhLabel:"中法越南戰爭", westId:"berlin-conference", westLabel:"柏林會議與新帝國主義瓜分非洲", note:"完全同期，分別是新帝國主義列強在亞洲（越南）與非洲同步展開的殖民擴張案例。"},
+  {noteYear:"1894", zhId:"sino-japanese", zhLabel:"甲午戰爭", westId:"bloc-rivalry", westLabel:"集團對立與一戰結構性起源（法俄同盟成立）", note:"同一年，東亞（日本崛起挑戰中國）與歐洲（法俄結盟制衡德國）同時進行權力格局重組。"},
+  {noteYear:"1904–1905", zhId:"russo-japanese", zhLabel:"日俄戰爭", westId:"bloc-rivalry", westLabel:"集團對立與一戰結構性起源（英法協約）", note:"直接因果關聯：日俄戰爭削弱俄國在亞洲的力量，促成英俄和解、走向三國協約，是同一條國際體系變遷主線的兩端。"}
+];
+
 var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史"};
 
-var state = { region:"all", index:0, tab:"narrative" };
+var state = { region:"all", index:0, tab:"narrative", sidebarOpen:false, openAccordion:"china" };
 
 function esc(s){ return s.replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
 
@@ -292,20 +337,11 @@ function render(){
   var cur = list[state.index];
 
   var html = '';
-  html += '<div class="header"><h1>近代外交史 · 卷宗</h1><p>外交特考讀書講義</p></div>';
+  html += '<div class="header-row"><button class="menu-btn" id="menu-btn">&#9776;</button><div class="header"><h1>近代外交史 · 卷宗</h1><p>外交特考讀書講義</p></div></div>';
 
   html += '<div class="filters">';
   Object.keys(REGION_LABELS).forEach(function(r){
     html += '<button class="' + (state.region === r ? 'active' : '') + '" data-region="' + r + '">' + REGION_LABELS[r] + '</button>';
-  });
-  html += '</div>';
-
-  html += '<div class="dots">';
-  list.forEach(function(e, i){
-    var cls = 'dot';
-    if (e.spec === 'core') cls += ' core';
-    if (i === state.index) cls += ' current';
-    html += '<div class="' + cls + '"></div>';
   });
   html += '</div>';
 
@@ -353,8 +389,67 @@ function render(){
   html += '<button id="next" ' + (state.index === list.length - 1 ? 'disabled' : '') + '>下一則 ›</button>';
   html += '</div>';
 
+  html += renderSidebar();
+
   document.getElementById('app').innerHTML = html;
   bindEvents();
+}
+
+function accordionSection(key, label, region){
+  var open = state.openAccordion === key;
+  var items = EVENTS.filter(function(e){ return e.region === region; });
+  var h = '<div class="acc-item">';
+  h += '<button class="acc-head' + (open ? ' open' : '') + '" data-acc="' + key + '"><span>' + label + '</span><span class="arrow">›</span></button>';
+  h += '<div class="acc-body' + (open ? ' open' : '') + '">';
+  items.forEach(function(e){
+    var mark = e.spec === 'core' ? '●' : '- - ';
+    h += '<div class="acc-row' + (e.spec === 'light' ? ' light' : '') + '">';
+    h += '<span class="yr">' + esc(e.year) + '</span>';
+    h += '<span class="ttl" data-jump="' + e.region + '|' + e.id + '"><span class="dotmark">' + mark + '</span>' + esc(e.title) + '</span>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function accordionCompare(){
+  var key = 'compare';
+  var open = state.openAccordion === key;
+  var h = '<div class="acc-item">';
+  h += '<button class="acc-head' + (open ? ' open' : '') + '" data-acc="' + key + '"><span>中西年代對照表</span><span class="arrow">›</span></button>';
+  h += '<div class="acc-body' + (open ? ' open' : '') + '">';
+  COMPARISON.forEach(function(c){
+    h += '<div class="cmp-row">';
+    h += '<div class="yr">' + esc(c.noteYear) + '</div>';
+    h += '<div class="pair"><span data-jump="china|' + c.zhId + '">' + esc(c.zhLabel) + '</span><span style="color:var(--slate)">×</span><span data-jump="west|' + c.westId + '">' + esc(c.westLabel) + '</span></div>';
+    h += '<div class="note">' + esc(c.note) + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function renderSidebar(){
+  var h = '<div class="sidebar-overlay' + (state.sidebarOpen ? ' on' : '') + '" id="sidebar-overlay">';
+  h += '<div class="sidebar">';
+  h += '<div class="sidebar-title">近代史卷宗 目錄</div>';
+  h += accordionSection('china', '近代中國外交史', 'china');
+  h += accordionSection('eastasia', '近代東亞外交史', 'eastasia');
+  h += accordionSection('west', '近代西洋外交史', 'west');
+  h += accordionCompare();
+  h += '</div></div>';
+  return h;
+}
+
+function jumpToEvent(region, id){
+  state.region = region;
+  var list = filteredEvents();
+  var idx = list.findIndex(function(e){ return e.id === id; });
+  state.index = idx >= 0 ? idx : 0;
+  state.tab = 'narrative';
+  state.sidebarOpen = false;
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function bindEvents(){
@@ -370,6 +465,22 @@ function bindEvents(){
   if (next) next.onclick = function(){ var list = filteredEvents(); if (state.index < list.length - 1){ state.index++; state.tab = 'narrative'; render(); } };
   document.querySelectorAll('.term').forEach(function(t){
     t.onclick = function(){ openGlossary(t.dataset.term); };
+  });
+  var menuBtn = document.getElementById('menu-btn');
+  if (menuBtn) menuBtn.onclick = function(){ state.sidebarOpen = true; render(); };
+  var sbOverlay = document.getElementById('sidebar-overlay');
+  if (sbOverlay) sbOverlay.onclick = function(e){ if (e.target.id === 'sidebar-overlay'){ state.sidebarOpen = false; render(); } };
+  document.querySelectorAll('[data-acc]').forEach(function(b){
+    b.onclick = function(){
+      state.openAccordion = (state.openAccordion === b.dataset.acc) ? null : b.dataset.acc;
+      render();
+    };
+  });
+  document.querySelectorAll('[data-jump]').forEach(function(el){
+    el.onclick = function(){
+      var parts = el.dataset.jump.split('|');
+      jumpToEvent(parts[0], parts[1]);
+    };
   });
 }
 
