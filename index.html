@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F3EAD3">
+<title>近代外交史卷宗</title>
+<style>
+:root{
+  --paper:#F3EAD3;
+  --card:#FBF5E6;
+  --line:#E0D3AC;
+  --ink:#241F17;
+  --slate:#5B6B7C;
+  --vermillion:#B23A2E;
+  --gold:#A9862F;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --serif:"Noto Serif TC",serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font);background:var(--paper);color:var(--ink);
+  font-size:16px;line-height:1.6;
+}
+button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
+#app{max-width:480px;margin:0 auto;padding:24px 16px 40px}
+.header{text-align:center;margin-bottom:18px}
+.header h1{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:1px;margin:0}
+.header p{font-size:12px;color:var(--slate);margin:4px 0 0}
+
+.filters{display:flex;gap:6px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.filters button{
+  padding:6px 14px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;font-size:13px;font-weight:500;color:var(--ink);
+}
+.filters button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.dot{width:6px;height:6px;border-radius:50%;background:transparent;border:1.5px dashed var(--slate)}
+.dot.core{border:none;background:#C9B98B;border-radius:50%}
+.dot.current{width:9px;height:9px;background:var(--vermillion)!important;border:none!important}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:4px;
+  padding:20px 22px 22px;position:relative;
+  box-shadow:0 1px 0 var(--line),0 6px 16px rgba(36,31,23,0.08);
+}
+.period-tag{
+  position:absolute;top:-10px;left:18px;background:var(--ink);color:var(--paper);
+  font-size:11px;padding:3px 10px;border-radius:2px;letter-spacing:0.5px;
+}
+.stamp{
+  position:absolute;top:10px;right:16px;width:58px;height:58px;border-radius:50%;
+  border:2px solid var(--vermillion);display:flex;align-items:center;justify-content:center;
+  transform:rotate(-9deg);color:var(--vermillion);font-family:var(--serif);
+  font-size:13px;font-weight:700;line-height:1.1;text-align:center;
+}
+.tag-light{
+  position:absolute;top:14px;right:16px;padding:4px 10px;border:1.5px dashed var(--slate);
+  color:var(--slate);font-size:11px;transform:rotate(5deg);font-weight:500;
+}
+.meta{margin-top:22px;margin-bottom:14px}
+.year{font-size:13px;color:var(--slate);margin-bottom:2px}
+.title{font-family:var(--serif);font-size:24px;font-weight:700}
+
+.tabs{display:flex;gap:4px;margin-bottom:14px}
+.tabs button{
+  flex:1;padding:7px 4px;font-size:12.5px;border-bottom:2px solid transparent;
+  color:var(--slate);font-weight:400;
+}
+.tabs button.active{border-bottom-color:var(--vermillion);color:var(--ink);font-weight:500}
+
+.content{font-size:14.5px;line-height:1.85}
+.content ul{margin:0;padding-left:18px}
+.content li{margin-bottom:8px}
+.term{color:var(--gold);border-bottom:1.5px dotted var(--gold);cursor:pointer;font-weight:500}
+.theory-block{margin-bottom:12px}
+.theory-label{font-family:var(--serif);color:var(--vermillion);font-weight:700;margin-right:4px}
+.light-block{margin-bottom:14px}
+.light-label{font-size:12px;color:var(--slate);font-weight:500;margin-bottom:4px}
+
+.nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+.nav button{
+  padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;font-size:14px;
+}
+.nav button:disabled{color:#C9BFA0;cursor:default}
+.nav .counter{font-size:12.5px;color:var(--slate)}
+
+.overlay{
+  position:fixed;inset:0;background:rgba(36,31,23,0.35);display:none;
+  align-items:flex-end;justify-content:center;z-index:50;
+}
+.overlay.on{display:flex}
+.sheet{
+  background:var(--card);width:100%;max-width:480px;border-top-left-radius:12px;
+  border-top-right-radius:12px;padding:18px 22px 26px;border-top:3px solid var(--gold);
+}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sheet-head .term-title{font-family:var(--serif);font-size:17px;font-weight:700}
+.sheet-head button{font-size:18px;color:var(--slate)}
+.sheet-body{font-size:14px;line-height:1.7;color:#3A3222}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="term-title" id="term-title"></div>
+      <button id="close-sheet">×</button>
+    </div>
+    <div class="sheet-body" id="term-body"></div>
+  </div>
+</div>
+
+<script>
+var GLOSSARY = {
+  "治外法權": "指外國人在他國領土內，不受當地法律管轄，而依其本國法律受本國（通常是領事）審判的特權。",
+  "最惠國待遇": "條約一方承諾給予另一方的優惠待遇，不得低於其給予任何第三國的待遇；若為片面最惠國待遇，則只有一方享有此保障，不對等。",
+  "兩強標準": "19世紀英國海軍政策，要求英國海軍實力須維持在同時超過世界第二、第三強海軍國家總和的水準，以確保絕對制海權。",
+  "光榮孤立": "19世紀英國長期奉行不與歐陸強權締結永久同盟的外交策略，依靠海上優勢與均勢外交自保，直到20世紀初因應德國崛起才改弦更張。",
+  "修昔底德陷阱": "指崛起強權挑戰既有霸權地位時，雙方因結構性猜忌與安全焦慮而走向戰爭的傾向，典出古希臘史家修昔底德對雅典崛起引發斯巴達恐懼、導致伯羅奔尼撒戰爭的描述。",
+  "再保條約": "1887年俾斯麥與俄國私下簽訂的秘密條約，承諾德俄互不與第三國聯合對付對方，目的在防止俄國倒向法國，卻與德奧同盟的對俄防禦義務互相矛盾。",
+  "扈從": "國際關係理論中，弱國選擇依附、追隨強權而非與之對抗的策略，目的是換取安全保障或利益分享，但也可能因此喪失自主性。",
+  "安全困境": "指一國為求自保而增強軍備或勢力範圍，卻使他國感到威脅而跟進反應，雙方陷入擴張螺旋上升、最終誰都不更安全的困境。",
+  "半主權國家": "國際法上主權遭部分侵蝕、但形式上仍保有國家地位的狀態，例如喪失關稅自主、司法自主或軍事駐紮權等部分主權要素，卻未完全淪為殖民地。",
+  "資本輸出": "列寧帝國主義論核心概念，指資本主義發展到壟斷階段後，資本家將過剩資本輸往海外投資設廠、承包礦權鐵路等，而非僅輸出商品，是帝國主義擴張的經濟動力。",
+  "文明標準": "19世紀西方國際法用以區分是否被視為平等主權國家的資格判准，依政治制度、法律體系是否符合西方標準決定，常被用作合理化不平等條約與治外法權的依據。",
+  "保民義舉": "1874年《中日北京專約》用以描述日本出兵台灣行動的措辭，清廷原意僅為賠款了事，卻被日本引申為間接承認其對琉球擁有宗主權的法理依據，是外交辭令模糊性遭利用的經典案例。"
+};
+
+var EVENTS = [
+  {id:"opium-war",region:"china",period:"①朝貢體系瓦解期 1839–1860",year:"1839–1842",title:"鴉片戰爭",spec:"core",
+    narrative:"中英貿易逆差、林則徐虎門銷煙，英國艦隊北上，清廷戰敗，1842年簽訂《南京條約》，割香港島、開五口通商、廢公行、協定關稅。隔年《虎門條約》確立{{治外法權}}、片面{{最惠國待遇}}。",
+    knowledge:["《南京條約》：割香港島、開五口通商、廢公行、協定關稅、賠款2100萬銀元","《虎門條約》確立{{治外法權}}、片面{{最惠國待遇}}，是不平等條約體系核心機制","南京條約未明文鴉片貿易合法化，也未規定公使駐京，成為第二次鴉片戰爭導火線之一"],
+    theory:[{label:"建構主義",text:"視角最貼近考古題方向：清朝朝貢體系認知與英國西發里亞主權體系互不相容，是兩套世界觀相撞。"},{label:"現實主義",text:"角度可談英國海權硬實力代差。"},{label:"依賴理論／IPE",text:"角度：協定關稅標誌中國被編入資本主義世界體系邊陲。"},{label:"國際公法",text:"角度：{{治外法權}}為{{文明標準}}下治外法權的典型適用。"}]},
+  {id:"taiping",region:"china",period:"①朝貢體系瓦解期 1839–1860",year:"1851–1864",title:"太平天國",spec:"light",
+    narrative:"洪秀全創拜上帝會，1851年金田起義建號太平天國，1853年定都天京。清廷依靠曾國藩湘軍、李鴻章淮軍及常勝軍長期圍剿，1864年天京陷落，太平天國覆滅。",
+    causal:"與第二次鴉片戰爭同時期發生，是清廷內憂外患夾擊的典型案例。湘軍淮軍崛起為後續自強運動提供人才與武力基礎。"},
+  {id:"arrow-war",region:"china",period:"①朝貢體系瓦解期 1839–1860",year:"1856–1860",title:"第二次鴉片戰爭",spec:"core",
+    narrative:"列強不滿修約受阻，藉亞羅號事件（英）、馬神甫事件（法）出兵；1858簽《天津條約》，換約引發衝突再起，1860英法聯軍攻入北京、火燒圓明園，簽《北京條約》。同一期間，俄國雖未直接參戰，卻以調停者身分居中斡旋，趁機分別於1858年（《璦琿條約》）、1860年（對俄《北京條約》）取得外東北大片領土，成為此役實質獲利最大者。",
+    knowledge:["增開多口通商（含長江沿岸、天津）、公使駐京、鴉片貿易合法化、允許內地遊歷傳教、割九龍半島予英","俄國取得外東北領土面積達百萬平方公里以上，是近代中國一次性喪失領土最多的個案——常被忽略但常考","傳教士內地自由傳教權成為後續教案頻傳、義和團遠因"],
+    theory:[{label:"現實主義",text:"為最貼近考古題方向：俄國不戰而獲最大利益，是搭便車與離岸平衡的經典操作。"},{label:"自由主義（制度面）",text:"角度：公使駐京、增開口岸可視為列強推動外交常態化制度框架，惟屬強制性輸出而非自願建制。"},{label:"依賴理論／IPE",text:"角度：鴉片貿易合法化＋內地傳教權，代表滲透從口岸擴張至內地。"},{label:"外交史方法論",text:"角度：亞羅號、馬神甫事件屬能動性層次的偶發藉口，修約需求的結構性壓力才是戰爭真正動因。"}]},
+  {id:"ryukyu",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1871–1879",title:"牡丹社事件與琉球問題",spec:"core",
+    narrative:"1871年琉球宮古島漁民漂流至台灣南部，遭當地原住民殺害54人。日本以琉球為己藩屬為由向清廷交涉，清廷以「生番化外之地」回應。日本藉此於1874年出兵台灣南部，清廷透過英國調停，與日本簽訂《北京專約》，承認日本此次出兵為{{保民義舉}}，並付款換取日軍撤兵。此協議被日本解讀為清廷間接承認其對琉球的宗主權。1879年，日本正式廢琉球藩、改設沖繩縣，完全併吞琉球王國。",
+    knowledge:["{{保民義舉}}字眼是關鍵外交陷阱——清廷原意只是賠款了事，卻被日本引申為承認宗主權轉移的法理依據","牡丹社事件是台灣近代化的直接催化劑：沈葆楨來台加強海防、推動開山撫番，並促成1885年台灣建省","琉球原為明清朝貢國，同時向日本薩摩藩納貢形成兩屬格局，1879年後兩屬體制終結","是甲午戰爭前20年中日在台灣、琉球、朝鮮的第一場正面角力"],
+    theory:[{label:"現實主義",text:"最貼近考古題方向：日本利用清廷化外之地的模糊表態，精準操作國際法語言完成實質宗主權轉移。"},{label:"建構主義",text:"角度：琉球兩屬體制是朝貢體系彈性主權觀的產物，西方一國一主權體系傳入後此模糊狀態不可持續。"},{label:"國際公法",text:"角度：{{保民義舉}}承認可視為國際法上的默示承認，是研究外交辭令法律效力的經典教材。"},{label:"地緣政治",text:"角度：台灣、琉球、朝鮮構成日本大陸政策向外擴張的第一島鏈起點。"}]},
+  {id:"sino-japanese",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1894–1895",title:"甲午戰爭",spec:"core",
+    narrative:"朝鮮長期是清朝傳統屬國，1882年壬午兵變、1884年甲申政變已顯示日本勢力積極介入朝鮮內政。1894年朝鮮爆發東學黨起義，農民軍攻陷全州，朝鮮國王請求清廷依屬國體制出兵助剿。清廷依1885年《天津條約》知會日本後出兵，日本卻援引同一條約的共同出兵權，藉口保護僑民同時大舉派兵入朝，並在停戰後拒絕撤兵，反而強佔朝鮮王宮、扶植親日政權。1894豐島海戰、平壤之戰、黃海海戰，1895威海衛之戰北洋艦隊全滅，簽《馬關條約》。條約簽訂後，俄法德三國以干涉還遼為由聯合施壓，迫使日本歸還遼東半島，日本則獲清廷追加贖遼費3000萬兩補償；此舉直接誘發1897–98年列強競相劃分在華勢力範圍的熱潮。",
+    knowledge:["1885年《天津條約》規定中日雙方出兵朝鮮須互相知會（共同出兵權）——日本正是利用此條款取得出兵朝鮮的法理依據","《馬關條約》：承認朝鮮獨立、割遼東半島/台灣/澎湖、賠款2億兩、開沙市重慶蘇州杭州、允許日本在華設廠（象徵{{資本輸出}}時代開始）","三國干涉還遼（1895）是甲午戰後到八國聯軍間關鍵過渡環節，直接連結1897–98瓜分勢力範圍熱潮"],
+    theory:[{label:"現實主義",text:"為最貼近考古題方向，尤其三國干涉還遼：日本挑戰東亞傳統中心構成權力轉移，三國干涉還遼為權力平衡教科書案例。"},{label:"民族主義",text:"角度：日本以戰勝完成國族建構驗收，中國戰敗則刺激知識菁英從天朝意識轉向民族危機意識。"},{label:"依賴理論／IPE",text:"角度：允許日本設廠象徵列強對華侵略由商品輸出轉向{{資本輸出}}，可嫁接列寧帝國主義論。"},{label:"比較政府與政治",text:"角度：可比較日本明治維新中央集權式現代化 vs 清朝洋務運動局部現代化的成果檢驗。"},{label:"外交史方法論",text:"角度：東學黨起義屬能動性層次的偶發導火線，清日對朝鮮宗主權的結構性競逐才是戰爭根本動因。"}]},
+  {id:"sino-russian-secret",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1896",title:"中俄密約",spec:"core",
+    narrative:"甲午戰敗後，清廷面臨日本崛起威脅，加上三國干涉還遼讓清廷誤判俄國為可靠盟友。1896年沙皇尼古拉二世加冕，李鴻章赴俄祝賀，俄國財政大臣維特趁機密商，雙方簽訂《中俄禦敵互相援助條約》。條約表面是軍事同盟，實際核心是換取俄國修築中東鐵路連接西伯利亞鐵路，俄國可在戰時使用中國口岸，鐵路沿線享有實質管轄權。",
+    knowledge:["密約名為共同防日，實為李鴻章聯俄制日戰略下的產物，也暴露此策略過度信任單一強權、反而引狼入室的致命弱點","中東鐵路成為俄國深入東北的合法管道，鐵路沿線護路駐軍權成為後續佔領東北的法理依據","直接鋪路1897–98年瓜分危機，也是日俄戰爭（1904–05）根本遠因"],
+    theory:[{label:"現實主義",text:"最貼近考古題方向：這是聯合次強制衡新興強權的{{扈從}}策略操作，卻是教科書等級的失敗案例——最終引狼入室。"},{label:"外交史方法論",text:"角度：適合做決策層次分析——李鴻章個人判斷、清廷體系層次的戰略困境、國際體系層次的權力真空。"},{label:"依賴理論／IPE",text:"角度：中東鐵路是近代中國第一個由外國全權掌控、深入內陸腹地的大型基礎建設特許權。"}]},
+  {id:"jiaozhou",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1897–1898",title:"膠州灣事件／瓜分危機",spec:"core",
+    narrative:"1897年山東發生巨野教案，德國藉口出兵強佔膠州灣，隔年強迫清廷簽訂《中德膠澳租界條約》，租借膠州灣99年並取得山東鐵路修築權及礦權。德國此舉引發連鎖效應：俄國強租旅順大連、英國強租威海衛及九龍新界、法國強租廣州灣。短短兩年內中國沿海精華地帶被劃分為列強勢力範圍，史稱瓜分危機。",
+    knowledge:["租借地與割讓不同：租借地名義上主權仍屬中國，但實際上是列強獨佔的勢力範圍","四強租借地及期限：德國膠州灣（99年）、俄國旅大（25年）、英國威海衛+九龍新界（99年）、法國廣州灣（99年）","瓜分危機是美國門戶開放政策（1899）真正的近因，比義和團事件更早"],
+    theory:[{label:"現實主義",text:"最貼近：列強瓜分是純粹的勢力範圍競逐，體現無政府狀態下的{{安全困境}}——德國一動，俄英法立即跟進。"},{label:"國際公法",text:"角度：租借地法律性質模糊，適合深入談主權與治理權分離概念。"},{label:"依賴理論／IPE",text:"角度：勢力範圍瓜分將中國經濟版圖依附於不同列強資本，是基礎建設邊陲化。"},{label:"自由主義／國際制度",text:"角度：美國門戶開放政策正是對這波瓜分危機的直接回應。"}]},
+  {id:"hundred-days",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1898",title:"戊戌變法",spec:"light",
+    narrative:"甲午戰敗刺激，康有為梁啟超公車上書。1898年光緒帝頒布變法詔書（百日維新），推動政治教育軍事改革。慈禧發動戊戌政變，光緒被幽禁，變法失敗，僅103天。",
+    causal:"直接由甲午戰敗刺激而起。變法失敗間接強化保守排外勢力主導地位，為兩年後義和團事件埋下政治伏筆。"},
+  {id:"boxer",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1900–1901",title:"八國聯軍",spec:"core",
+    narrative:"列強劃分勢力範圍引發民間反抗，義和團扶清滅洋興起，慈禧一度利用義和團向列強宣戰；1900義和團攻擊教堂與使館區，八國聯軍攻入北京，慈禧光緒西逃，1901簽《辛丑條約》。美國同時期另外提出門戶開放政策，主張維持中國領土行政完整，與其他列強持續劃分勢力範圍的做法形成路線分歧。",
+    knowledge:["《辛丑條約》未割地但性質最嚴重：賠款4.5億兩、使館區劃界駐兵、拆大沽炮台准列強駐軍京津沿線、禁止科舉考試地區停考五年","門戶開放政策代表列強策略出現保全中國以共同宰制與持續劃分勢力範圍兩條路線的分歧"],
+    theory:[{label:"自由主義／國際制度",text:"角度為最貼近考古題方向：美國門戶開放主張機會均等，代表列強對華策略出現路線分歧。"},{label:"現實主義",text:"角度：辛丑條約使館駐兵、拆炮台，本質為確保對清廷軍事嚇阻與武力投射管道常態化。"},{label:"民族主義",text:"角度（反向案例）：義和團為排外民間民族主義，被慈禧工具化對抗列強，卻缺乏現代國家組織能力而慘敗。"},{label:"國際公法",text:"角度：辛丑條約未割地但透過賠款駐軍達成實質主權侵蝕，適合連結{{半主權國家}}概念。"},{label:"依賴理論／IPE",text:"角度：庚子賠款規模為條約體系對中國財政的終極壓榨，屬邊陲化的財政面終點案例。"}]},
+  {id:"russo-japanese",region:"china",period:"③清末新政與辛亥革命轉型期 1901–1912",year:"1904–1905",title:"日俄戰爭",spec:"core",
+    narrative:"甲午戰爭後俄國藉三國干涉還遼取得在華影響力，義和團事件期間俄國藉口保護中東鐵路出兵佔領東北全境，事後拒絕撤軍。1902年英日同盟簽訂，日本於1904年不宣而戰突襲旅順俄艦，爆發日俄戰爭。戰爭主要在中國東北領土上進行，日本海軍其後全殲俄國波羅的海艦隊，雙方於美國調停下簽訂《朴茨茅斯條約》，日本取得旅順大連租借權、南滿鐵路及庫頁島南半部。",
+    knowledge:["戰爭在中國領土進行，交戰雙方均非中國，清廷宣布局外中立，凸顯清末主權淪喪的極致","《朴茨茅斯條約》由美國總統老羅斯福出面調停，老羅斯福因此獲得1906年諾貝爾和平獎","日俄戰爭確立日本在滿洲南部及朝鮮半島的優勢地位，直接鋪路1910年日本正式併吞朝鮮"],
+    theory:[{label:"現實主義",text:"最貼近：典型的權力平衡與同盟政治操作——英國透過英日同盟扶植日本制衡俄國，戰爭結果直接促成英俄從對立走向合作。"},{label:"建構主義／民族主義",text:"角度：日本戰勝震撼全球，是非白人國家首次擊敗歐洲列強的象徵性事件，顛覆當時普遍的{{文明標準}}種族階序認知。"},{label:"國際公法",text:"角度：清廷局外中立宣告極具諷刺性——自己領土上被兩個外國交戰，自己卻無實質主權可介入。"},{label:"外交史方法論",text:"角度：適合做層次分析——體系層次、國家層次、個人層次。"}]},
+  {id:"xinhai",region:"china",period:"③清末新政與辛亥革命轉型期 1901–1912",year:"1911",title:"辛亥革命",spec:"light",
+    narrative:"清廷推行清末新政但步調緩慢，皇族內閣引發立憲派失望；各地保路運動引發社會動盪；1911年武昌起義爆發，各省紛紛獨立響應。1912年1月孫中山就任臨時大總統，2月宣統帝退位，清朝覆滅。",
+    causal:"直接銜接戊戌變法失敗後保守派掌權的脈絡，可視為制度層次改革失敗這條主線的最終爆發。清朝瓦解直接觸發列強在邊疆地區的連鎖反應，這條線索留待民初外交時期再展開。"},
+  {id:"meiji",region:"eastasia",period:"日本近代化起點",year:"1868起",title:"明治維新",spec:"core",
+    narrative:"1853年黑船事件打破日本鎖國，倒幕運動興起，1868年明治天皇親政。新政府推動廢藩置縣、殖產興業、富國強兵、文明開化等現代化改革，1871–73年岩倉使節團出訪歐美。",
+    knowledge:["廢藩置縣（1871）徹底終結幕藩體制，建立中央集權國家","1889年《大日本帝國憲法》確立君主立憲體制，是亞洲第一部近代成文憲法"],
+    theory:[{label:"現實主義",text:"最貼近：明治維新是外部壓力下快速完成國家能力建構的案例，中央集權改革與清朝自強運動地方分權模式形成對比。"},{label:"建構主義",text:"角度：文明開化是主動採納西方{{文明標準}}以求平等承認的策略性選擇。"}]},
+  {id:"bismarck",region:"west",period:"③俾斯麥同盟體系期 1871–1890",year:"1871–1890",title:"俾斯麥同盟體系",spec:"core",
+    narrative:"普法戰爭結束、德意志帝國統一後，俾斯麥外交核心目標轉為維持現狀、孤立法國。建構三皇同盟、德奧同盟、三國同盟等複雜同盟網絡，1887年更與俄國簽訂{{再保條約}}。1888年威廉二世繼位，1890年俾斯麥下台，新皇拒絕續簽{{再保條約}}，體系隨即瓦解。",
+    knowledge:["德奧同盟義務（共同防俄）與{{再保條約}}（對俄中立承諾）彼此矛盾，僅靠俾斯麥本人精算平衡","俾斯麥外交目標是維持現狀而非擴張，與威廉二世世界政策形成對比"],
+    theory:[{label:"現實主義",text:"最貼近：俾斯麥體系是精算型權力平衡極致案例。"},{label:"外交史方法論",text:"角度：體系高度依賴個人能動性，威廉二世上台後迅速瓦解證明此依賴的脆弱性。"}]},
+  {id:"bloc-rivalry",region:"west",period:"④集團對立期 1890–1914",year:"1890–1914",title:"集團對立與一戰結構性起源",spec:"core",
+    narrative:"1890年俾斯麥下台後，威廉二世推動世界政策，追求德國成為世界殖民強權，自1898年起大力擴建公海艦隊，直接挑戰英國{{兩強標準}}海軍優勢，觸發英德軍備競賽。第二次工業革命後起的德國、義大利等國工業實力迅速追上傳統強權，卻因殖民地瓜分已近尾聲，僅能分得零星殖民地，這正是政治經濟發展不平衡矛盾的具體體現。法國藉機擺脫孤立：1894年法俄同盟成立；英國因{{光榮孤立}}政策難以為繼，1904年簽署英法協約；隨後1907年英俄協約，三國協約正式對抗三國同盟。三大矛盾各自透過具體危機層層堆疊：英德矛盾以海軍軍備競賽為核心；法德矛盾體現在1905年第一次摩洛哥危機與1911年第二次摩洛哥危機；俄奧矛盾根源於巴爾幹半島泛斯拉夫主義與泛日耳曼主義對立，具體衝突包括1908年波士尼亞危機、1912–13年兩次巴爾幹戰爭。這些危機最終在1914年塞拉耶佛事件引爆第一次世界大戰。",
+    knowledge:["政治經濟發展不平衡是列寧帝國主義論核心論點，後起工業強權因殖民地已被瓜分而心生不滿","法俄同盟（1894）打破意識形態相近才結盟的直覺，是純粹現實利益結盟","英法協約、英俄協約本質是劃分殖民地利益範圍，不含自動參戰條款，與同盟法律性質不同","兩次摩洛哥危機（1905丹吉爾、1911阿加迪爾）都以德國砲艦外交介入告終，但每次反而讓英法關係更緊密","巴爾幹被稱為歐洲火藥庫：1908波士尼亞危機、1912–13兩次巴爾幹戰爭層層堆疊，最終1914塞拉耶佛事件引爆一戰"],
+    theory:[{label:"現實主義（尤其{{修昔底德陷阱}}）",text:"最貼近：崛起強權尋求與實力不相稱的政治地位，觸發既有霸權抗衡反應。"},{label:"建構主義／民族主義",text:"角度：巴爾幹半島泛斯拉夫主義與泛日耳曼主義，是民族主義意識形態被大國工具化、用以擴張地緣政治影響力的案例。"},{label:"依賴理論／IPE",text:"角度：政治經濟發展不平衡呼應列寧帝國主義論核心命題。"},{label:"外交史方法論",text:"角度：適合做完整層次分析——系統層次的多極均勢瓦解、國家層次的德國世界政策、個人層次的威廉二世風格。"}]}
+];
+
+var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史"};
+
+var state = { region:"all", index:0, tab:"narrative" };
+
+function esc(s){ return s.replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+
+function parseInline(text){
+  return esc(text).replace(/\{\{(.*?)\}\}/g, function(m, term){
+    return '<span class="term" data-term="' + term + '">' + term + '</span>';
+  });
+}
+
+function filteredEvents(){
+  return state.region === "all" ? EVENTS : EVENTS.filter(function(e){ return e.region === state.region; });
+}
+
+function render(){
+  var list = filteredEvents();
+  if (state.index >= list.length) state.index = list.length - 1;
+  if (state.index < 0) state.index = 0;
+  var cur = list[state.index];
+
+  var html = '';
+  html += '<div class="header"><h1>近代外交史 · 卷宗</h1><p>外交特考讀書講義</p></div>';
+
+  html += '<div class="filters">';
+  Object.keys(REGION_LABELS).forEach(function(r){
+    html += '<button class="' + (state.region === r ? 'active' : '') + '" data-region="' + r + '">' + REGION_LABELS[r] + '</button>';
+  });
+  html += '</div>';
+
+  html += '<div class="dots">';
+  list.forEach(function(e, i){
+    var cls = 'dot';
+    if (e.spec === 'core') cls += ' core';
+    if (i === state.index) cls += ' current';
+    html += '<div class="' + cls + '"></div>';
+  });
+  html += '</div>';
+
+  if (cur){
+    html += '<div class="card">';
+    html += '<div class="period-tag">' + esc(cur.period) + '</div>';
+    if (cur.spec === 'core'){
+      html += '<div class="stamp">核心<br>考點</div>';
+    } else {
+      html += '<div class="tag-light">補充脈絡</div>';
+    }
+    html += '<div class="meta"><div class="year">' + esc(cur.year) + '</div><div class="title">' + esc(cur.title) + '</div></div>';
+
+    if (cur.spec === 'core'){
+      html += '<div class="tabs">';
+      [["narrative","事件經過"],["knowledge","重要知識點"],["theory","理論詮釋"]].forEach(function(t){
+        html += '<button class="' + (state.tab === t[0] ? 'active' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+      });
+      html += '</div>';
+      html += '<div class="content">';
+      if (state.tab === 'narrative') html += parseInline(cur.narrative);
+      if (state.tab === 'knowledge'){
+        html += '<ul>';
+        cur.knowledge.forEach(function(k){ html += '<li>' + parseInline(k) + '</li>'; });
+        html += '</ul>';
+      }
+      if (state.tab === 'theory'){
+        cur.theory.forEach(function(t){
+          html += '<div class="theory-block"><span class="theory-label">' + parseInline(t.label) + '</span>' + parseInline(t.text) + '</div>';
+        });
+      }
+      html += '</div>';
+    } else {
+      html += '<div class="content">';
+      html += '<div class="light-block"><div class="light-label">事件經過</div>' + parseInline(cur.narrative) + '</div>';
+      html += '<div><div class="light-label">與主線的因果連結</div>' + parseInline(cur.causal) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  html += '<div class="nav">';
+  html += '<button id="prev" ' + (state.index === 0 ? 'disabled' : '') + '>‹ 上一則</button>';
+  html += '<div class="counter">' + (state.index + 1) + ' / ' + list.length + '</div>';
+  html += '<button id="next" ' + (state.index === list.length - 1 ? 'disabled' : '') + '>下一則 ›</button>';
+  html += '</div>';
+
+  document.getElementById('app').innerHTML = html;
+  bindEvents();
+}
+
+function bindEvents(){
+  document.querySelectorAll('[data-region]').forEach(function(b){
+    b.onclick = function(){ state.region = b.dataset.region; state.index = 0; state.tab = 'narrative'; render(); };
+  });
+  document.querySelectorAll('[data-tab]').forEach(function(b){
+    b.onclick = function(){ state.tab = b.dataset.tab; render(); };
+  });
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  if (prev) prev.onclick = function(){ if (state.index > 0){ state.index--; state.tab = 'narrative'; render(); } };
+  if (next) next.onclick = function(){ var list = filteredEvents(); if (state.index < list.length - 1){ state.index++; state.tab = 'narrative'; render(); } };
+  document.querySelectorAll('.term').forEach(function(t){
+    t.onclick = function(){ openGlossary(t.dataset.term); };
+  });
+}
+
+function openGlossary(term){
+  document.getElementById('term-title').textContent = term;
+  document.getElementById('term-body').textContent = GLOSSARY[term] || '（尚未收錄此詞條解釋）';
+  document.getElementById('overlay').classList.add('on');
+}
+document.getElementById('overlay').onclick = function(e){
+  if (e.target.id === 'overlay') document.getElementById('overlay').classList.remove('on');
+};
+document.getElementById('close-sheet').onclick = function(){
+  document.getElementById('overlay').classList.remove('on');
+};
+
+render();
+</script>
+</body>
+</html>
