@@ -43,6 +43,49 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   border:1px solid var(--line);background:var(--card);display:flex;align-items:center;
   justify-content:center;font-size:16px;color:var(--ink);
 }
+.search-btn{
+  position:absolute;right:0;top:2px;width:36px;height:36px;border-radius:8px;
+  border:1px solid var(--line);background:var(--card);display:flex;align-items:center;
+  justify-content:center;font-size:15px;color:var(--ink);
+}
+.search-panel{
+  position:fixed;inset:0;background:var(--paper);z-index:70;display:none;
+  flex-direction:column;padding:16px 16px 0;
+}
+.search-panel.on{display:flex}
+.search-input-row{display:flex;gap:8px;margin-bottom:14px}
+.search-input-row input{
+  flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);
+  background:var(--card);font-size:15px;color:var(--ink);font-family:inherit;
+}
+.search-input-row button{
+  padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);
+  font-size:14px;color:var(--slate);
+}
+.search-results{flex:1;overflow-y:auto;padding-bottom:20px}
+.search-result-item{
+  padding:12px 10px;border-bottom:1px solid var(--line);cursor:pointer;
+}
+.search-result-item .sr-type{
+  font-size:10.5px;color:var(--gold);font-weight:500;margin-bottom:2px;
+}
+.search-result-item .sr-title{font-size:15px;font-weight:500;color:var(--ink)}
+.search-result-item .sr-snippet{font-size:12.5px;color:var(--slate);margin-top:3px;line-height:1.5}
+.search-empty{color:var(--slate);font-size:13px;text-align:center;padding:40px 20px}
+
+.quiz-toggle{
+  display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;
+}
+.quiz-toggle button{
+  padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;
+  font-size:12.5px;color:var(--slate);
+}
+.quiz-toggle button.active{background:var(--vermillion);color:var(--paper);border-color:var(--vermillion)}
+.reveal-btn{
+  width:100%;padding:14px;border-radius:8px;border:1.5px dashed var(--gold);
+  background:rgba(169,134,47,0.06);color:var(--gold);font-size:14px;font-weight:500;margin-top:10px;
+}
+.jumplink{color:var(--vermillion);border-bottom:1.5px dotted var(--vermillion);cursor:pointer;font-weight:500}
 
 .sidebar-overlay{
   position:fixed;inset:0;background:rgba(36,31,23,0.4);display:none;z-index:60;
@@ -144,6 +187,14 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 <body>
 <div id="app"></div>
 
+<div class="search-panel" id="search-panel">
+  <div class="search-input-row">
+    <input type="text" id="search-input" placeholder="搜尋事件、理論、關鍵字…" autocomplete="off">
+    <button id="search-close">取消</button>
+  </div>
+  <div class="search-results" id="search-results"></div>
+</div>
+
 <div class="overlay" id="overlay">
   <div class="sheet">
     <div class="sheet-head">
@@ -183,7 +234,9 @@ var GLOSSARY = {
   "巴巴羅薩行動": "1941年納粹德國入侵蘇聯的軍事行動代號，是希特勒撕毀德蘇互不侵犯條約、開闢東線戰場的行動，也是二戰規模急遽擴大的關鍵轉折。",
   "耆英": "清朝宗室官員，鴉片戰爭後負責代表清廷簽訂《南京條約》《虎門條約》《中美望廈條約》《中法黃埔條約》四項條約，是當時與西方國家談判的最高官員，被部分學者稱為中國史上第一位外交部長。",
   "紐倫堡大審": "1945至1946年同盟國在德國紐倫堡對納粹戰犯進行的國際軍事法庭審判，是近代國際法首次系統性追究國家領導人戰爭罪責與危害人類罪的重要先例，對後續國際刑事法的發展影響深遠。",
-  "關東都督府": "日俄戰爭後，日本於1906年在遼東半島設立的殖民統治機關，設於旅順，統轄關東州（旅順大連租借地）及南滿鐵路沿線事務，兼具行政與軍事職能，是日本經營中國東北的核心據點，關東軍即由此發展而來。"
+  "關東都督府": "日俄戰爭後，日本於1906年在遼東半島設立的殖民統治機關，設於旅順，統轄關東州（旅順大連租借地）及南滿鐵路沿線事務，兼具行政與軍事職能，是日本經營中國東北的核心據點，關東軍即由此發展而來。",
+  "台灣民主國": "1895年馬關條約割台消息傳出後，台灣官紳為求自保、避免被日本視為清廷直接抵抗，短暫成立的政權，推舉巡撫唐景崧為總統，但唐景崧與大批官員在日軍登陸後迅即逃亡，實際抵抗轉由丘逢甲、劉永福等人領導的地方義勇軍持續，最終不敵日軍優勢兵力，台灣全島於1895年底淪為日本殖民地，直至1945年二戰結束才光復。",
+  "王寵惠": "中華民國第一位派任至常設國際法院（Permanent Court of International Justice）擔任法官的外交家與法學家，對我國近代國際法發展貢獻卓著，是近代中國參與國際司法體系的重要指標人物。"
 };
 
 var EVENTS = [
@@ -217,7 +270,7 @@ var EVENTS = [
 ,
   {id:"sino-japanese",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1894–1895",title:"甲午戰爭",spec:"core",
     narrative:"朝鮮長期是清朝傳統屬國，1882年壬午兵變、1884年甲申政變已顯示日本勢力積極介入朝鮮內政。1894年朝鮮爆發東學黨起義，農民軍攻陷全州，朝鮮國王請求清廷依屬國體制出兵助剿。清廷依1885年《天津條約》知會日本後出兵，日本卻援引同一條約的共同出兵權，藉口保護僑民同時大舉派兵入朝，並在停戰後拒絕撤兵，反而強佔朝鮮王宮、扶植親日政權。1894豐島海戰、平壤之戰、黃海海戰，1895威海衛之戰北洋艦隊全滅，簽《馬關條約》。條約簽訂後，俄法德三國以干涉還遼為由聯合施壓，迫使日本歸還遼東半島，日本則獲清廷追加贖遼費3000萬兩補償；此舉直接誘發1897–98年列強競相劃分在華勢力範圍的熱潮。",
-    knowledge:["1885年《天津條約》規定中日雙方出兵朝鮮須互相知會（共同出兵權）——日本正是利用此條款取得出兵朝鮮的法理依據","《馬關條約》：承認朝鮮獨立、割遼東半島/台灣/澎湖、賠款2億兩、開沙市重慶蘇州杭州、允許日本在華設廠（象徵{{資本輸出}}時代開始）","三國干涉還遼（1895）是甲午戰後到八國聯軍間關鍵過渡環節，直接連結1897–98瓜分勢力範圍熱潮"],
+    knowledge:["1885年《天津條約》規定中日雙方出兵朝鮮須互相知會（共同出兵權）——日本正是利用此條款取得出兵朝鮮的法理依據","《馬關條約》：承認朝鮮獨立、割遼東半島/台灣/澎湖、賠款2億兩、開沙市重慶蘇州杭州、允許日本在華設廠（象徵{{資本輸出}}時代開始）","三國干涉還遼（1895）是甲午戰後到八國聯軍間關鍵過渡環節，直接連結1897–98瓜分勢力範圍熱潮","割台消息傳出後，台灣官紳為求自保、避免被日本視為清廷直接抵抗，於1895年5月宣布成立「{{台灣民主國}}」，推舉巡撫唐景崧為總統，然而唐景崧與大批官員在日軍登陸後迅即逃亡，抵抗實際由丘逢甲、劉永福等人領導的地方義勇軍持續至同年10月，最終不敵日軍優勢兵力而告終，台灣全島淪為日本殖民地直至1945年"],
     theory:[{label:"現實主義",text:"為最貼近考古題方向，尤其三國干涉還遼：日本挑戰東亞傳統中心構成權力轉移，三國干涉還遼為權力平衡教科書案例。"},{label:"民族主義",text:"角度：日本以戰勝完成國族建構驗收，中國戰敗則刺激知識菁英從天朝意識轉向民族危機意識。"},{label:"依賴理論／IPE",text:"角度：允許日本設廠象徵列強對華侵略由商品輸出轉向{{資本輸出}}，可嫁接列寧帝國主義論。"},{label:"比較政府與政治",text:"角度：可比較日本明治維新中央集權式現代化 vs 清朝洋務運動局部現代化的成果檢驗。"},{label:"外交史方法論",text:"角度：東學黨起義屬能動性層次的偶發導火線，清日對朝鮮宗主權的結構性競逐才是戰爭根本動因。"}]},
   {id:"sino-russian-secret",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1896",title:"中俄密約",spec:"core",
     narrative:"甲午戰敗後，清廷面臨日本崛起威脅，加上三國干涉還遼讓清廷誤判俄國為可靠盟友。1896年沙皇尼古拉二世加冕，李鴻章赴俄祝賀，俄國財政大臣維特趁機密商，雙方簽訂《中俄禦敵互相援助條約》。條約表面是軍事同盟，實際核心是換取俄國修築中東鐵路連接西伯利亞鐵路，俄國可在戰時使用中國口岸，鐵路沿線享有實質管轄權。",
@@ -401,35 +454,50 @@ var COMPARISON = [
 
 var THEORY_CARDS = [
   {id:"security-dilemma",title:"安全困境",definition:"指一國為求自保而增強軍備或擴大勢力範圍，卻使他國感到威脅而採取反制措施，雙方陷入螺旋式擴張、彼此都不曾更安全的困境。源於國際體系的無政府狀態下，一國無法確知他國是否具有侵略意圖，只能以最壞情況設想並預作防範。",scholars:"赫茲（John Herz）最早提出概念，後由 Jervis 等學者進一步發展",applications:[{context:"俄羅斯入侵烏克蘭（2022）",note:"112年申論題直接考此角度：北約東擴被俄羅斯視為安全威脅，烏克蘭尋求加入北約又被俄羅斯視為進一步威脅，雙方陷入安全困境螺旋"},{context:"列強瓜分中國（1897–98膠州灣事件）",note:"德國強佔膠州灣後，俄英法立即跟進強租港灣，深怕自己在瓜分競賽中落後，是近代史上的安全困境案例"}]},
-  {id:"balance-of-power",title:"權力平衡理論",definition:"主張當某一強權實力膨脹到可能支配整個體系時，其他國家會透過內部抗衡（增強自身軍備）或外部抗衡（結盟）來恢復力量平衡，避免任一強權獨大、確保體系穩定。是古典現實主義與結構現實主義的核心命題之一。",scholars:"摩根索（Hans Morgenthau）、沃爾茲（Kenneth Waltz）；沃爾特（Stephen Walt）提出修正版威脅平衡理論",applications:[{context:"烏克蘭應對俄國干預（2022年前）",note:"113年申論題直接考：烏克蘭如何運用內部平衡與外部平衡因應俄國威脅"},{context:"七次反法同盟對抗拿破崙（1792–1815）",note:"英國作為離岸平衡者結合歐陸各國制衡法國獨大，是權力平衡理論的歷史經典案例，已建成完整事件卡"},{context:"美國抗衡中國崛起",note:"111年申論題考拜登政府採取的內部與外部抗衡措施"}],note:"與權力轉移理論的關鍵差異——本理論認為權力均衡帶來穩定和平；權力轉移理論則認為權力均衡（尤其新興強權即將追平既有強權時）才是最危險的階段，兩者對權力分布均等是否有利和平的判斷方向相反，考古題常考這個對比陷阱"},
+  {id:"balance-of-power",title:"權力平衡理論",definition:"主張當某一強權實力膨脹到可能支配整個體系時，其他國家會透過內部抗衡（增強自身軍備）或外部抗衡（結盟）來恢復力量平衡，避免任一強權獨大、確保體系穩定。是古典現實主義與結構現實主義的核心命題之一。",scholars:"摩根索（Hans Morgenthau）、沃爾茲（Kenneth Waltz）；沃爾特（Stephen Walt）提出修正版威脅平衡理論",applications:[{context:"烏克蘭應對俄國干預（2022年前）",note:"113年申論題直接考：烏克蘭如何運用內部平衡與外部平衡因應俄國威脅"},{context:"七次反法同盟對抗拿破崙（1792–1815）",note:"英國作為離岸平衡者結合歐陸各國制衡法國獨大，是權力平衡理論的歷史經典案例，詳見[[west|napoleonic-wars|拿破崙戰爭與反法同盟]]事件卡"},{context:"美國抗衡中國崛起",note:"111年申論題考拜登政府採取的內部與外部抗衡措施"}],note:"與權力轉移理論的關鍵差異——本理論認為權力均衡帶來穩定和平；權力轉移理論則認為權力均衡（尤其新興強權即將追平既有強權時）才是最危險的階段，兩者對權力分布均等是否有利和平的判斷方向相反，考古題常考這個對比陷阱"},
   {id:"power-transition",title:"權力轉移理論",definition:"由歐根斯基（A.F.K. Organski）提出，主張國際體系本質上是階層化（而非單純無政府）的，體系頂端存在一個主導強權，戰爭最可能發生在新興挑戰者的實力即將追平主導強權（權力轉移／均等化）、且該挑戰者對現狀不滿（修正主義傾向）的階段——關鍵不在權力是否平衡，而在挑戰者是否滿意現狀。",scholars:"歐根斯基（A.F.K. Organski）",applications:[{context:"以色列與哈瑪斯衝突（2023年後）",note:"114年申論題考：運用權力轉移理論分析衝突並提出解決方案"},{context:"美中權力轉移辯論",note:"修昔底德陷阱概念（艾利森）常與權力轉移理論相互引用，探討崛起強權與既有霸權之間的結構性衝突風險"}],note:"注意與權力平衡理論方向相反——本理論主張權力越接近均等、越危險，而非越平衡越和平"},
   {id:"realism-variants",title:"攻勢／守勢／結構／新古典現實主義",definition:"現實主義內部依對國家該追求多少權力及國家意圖是否可知的不同假設，分化出多個流派——攻勢現實主義主張國家應持續追求權力極大化，安全是有限資源、他國增長必是自身損失；守勢現實主義主張國家只需追求足夠的安全，過度擴張反而招致反制；結構現實主義強調體系結構（無政府狀態、國家能力分布）決定國際關係的形式；新古典現實主義則額外納入國家內部因素（決策者認知、國內政治）解釋對外政策的具體選擇，並區分國家對現狀的滿足或修正主義傾向。",scholars:"米爾斯海默（攻勢）、沃爾茲（結構）、新古典現實主義代表學者包括Randall Schweller等",applications:[{context:"108年申論題",note:"直接要求列出攻勢現實主義與守勢現實主義代表學者，並比較兩者對權力的看法"},{context:"112年選擇題",note:"考結構現實主義三個基本假設，並考國家追求相對利益而非絕對利益"}]},
-  {id:"neoliberal-institutionalism",title:"新自由制度主義",definition:"主張國際體系雖仍處於無政府狀態，但透過國際制度（國際組織、條約、建制）的建立，可以降低交易成本、增加資訊透明度、提高背信成本，進而促進國家間合作，緩和純粹權力政治的衝突傾向。與現實主義最大差異在於是否相信制度能夠實質改變國家行為。",scholars:"基歐漢（Robert Keohane）",applications:[{context:"109年申論題",note:"考戰爭約制因素及川普政府外交戰略對這些因素的挑戰"},{context:"布雷頓森林體系（1944）",note:"是新自由制度主義的歷史實踐案例，已建成完整事件卡"}]},
+  {id:"neoliberal-institutionalism",title:"新自由制度主義",definition:"主張國際體系雖仍處於無政府狀態，但透過國際制度（國際組織、條約、建制）的建立，可以降低交易成本、增加資訊透明度、提高背信成本，進而促進國家間合作，緩和純粹權力政治的衝突傾向。與現實主義最大差異在於是否相信制度能夠實質改變國家行為。",scholars:"基歐漢（Robert Keohane）",applications:[{context:"109年申論題",note:"考戰爭約制因素及川普政府外交戰略對這些因素的挑戰"},{context:"布雷頓森林體系（1944）",note:"是新自由制度主義的歷史實踐案例，詳見[[modern|bretton-woods|布雷頓森林體系]]事件卡"}]},
   {id:"complex-interdependence",title:"複雜互賴理論",definition:"由基歐漢與奈伊提出，主張當代國際關係已從單純的國家中心、軍事安全優先模式，演變為多元行為者、多重溝通管道並存、軍事力量重要性相對下降的複雜互賴狀態，不同議題領域（經濟、環境、安全等）呈現不同的互賴模式與權力分布，不能一概而論。",scholars:"基歐漢（Robert Keohane）、奈伊（Joseph Nye）",applications:[{context:"112年選擇題",note:"考複雜互賴理論的核心內容，特別考軍事力量重要性下降而非不可取代這個常見誤解"}]},
   {id:"wedge-strategy",title:"楔形策略",definition:"指一國企圖分化、削弱對手陣營內部團結的策略——透過提供經濟誘因、安全保障或其他利益，拉攏對手陣營中原本立場搖擺或利益考量不同的成員，使其與陣營核心產生疏離，達到不戰而弱化對方聯盟的效果。",applications:[{context:"中國深化與太平洋島國關係",note:"111年申論題直接考：以楔形策略視角分析中國此舉的戰略意義，並評估機會與挑戰"}]},
   {id:"asean-centrality",title:"東協中心性／東協模式",definition:"東協中心性指東協在東亞區域整合與安全架構中，堅持扮演核心主導角色、不願被域外大國邊緣化或取代其協調地位的原則；東協模式則指東協內部及對外交往時的獨特風格——強調非正式化協商（而非制度化正式談判）、主權平等、共識決、不干涉內政、不訴諸武力。",applications:[{context:"112年申論題",note:"考東協中心性定義及當代東協安全經濟戰略的調整"},{context:"109年選擇題",note:"考東協模式的具體內容，特別考非制度化而非制度化是其核心特色"}]},
   {id:"allison-models",title:"Allison三種決策模型",definition:"葛蘭姆．艾里森在《決策的本質》一書中，針對古巴飛彈危機的決策過程，提出三種分析外交決策的模型：理性行為者模型（視國家為單一理性行為者，依成本效益計算做出最適決策）、組織過程模型（決策反映政府各部門既有的標準作業程序與組織慣性）、官僚政治模型（決策是政府內部各部門、各官員基於自身利益折衝談判的結果）。",scholars:"葛蘭姆．艾里森（Graham Allison）",applications:[{context:"107年申論題",note:"直接考三種決策模型的要義"},{context:"109年選擇題",note:"考反映所屬組織特性對應組織過程模型"}]},
-  {id:"balancing-bandwagoning-hedging",title:"抗衡／扈從／避險策略",definition:"描述國家面對外部強權壓力時的三種主要回應策略——抗衡指聯合他國或增強自身實力以對抗威脅來源；扈從指選擇依附、追隨強權以換取安全保障或利益分享，但可能因此喪失自主性；避險則是介於兩者之間，同時與強權保持一定合作、又不完全倒向任一方，通常發生在國際局勢不明朗、避險國缺乏足夠實力單獨抗衡時。",applications:[{context:"107年申論題",note:"直接考避險策略的定義及其較可能實現的情境"},{context:"中俄密約（1896）",note:"李鴻章的聯俄制日戰略是扈從策略操作失敗的歷史案例，已建成完整事件卡"}]},
+  {id:"balancing-bandwagoning-hedging",title:"抗衡／扈從／避險策略",definition:"描述國家面對外部強權壓力時的三種主要回應策略——抗衡指聯合他國或增強自身實力以對抗威脅來源；扈從指選擇依附、追隨強權以換取安全保障或利益分享，但可能因此喪失自主性；避險則是介於兩者之間，同時與強權保持一定合作、又不完全倒向任一方，通常發生在國際局勢不明朗、避險國缺乏足夠實力單獨抗衡時。",applications:[{context:"107年申論題",note:"直接考避險策略的定義及其較可能實現的情境"},{context:"中俄密約（1896）",note:"李鴻章的聯俄制日戰略是扈從策略操作失敗的歷史案例，詳見[[china|sino-russian-secret|中俄密約]]事件卡"}]},
   {id:"internal-external-balancing",title:"內部抗衡與外部抗衡",definition:"屬於結構現實主義下對抗衡策略的進一步區分——內部抗衡指國家透過強化自身軍事、經濟實力來對抗威脅；外部抗衡指透過與他國結盟、建立聯盟體系來共同對抗威脅來源。",applications:[{context:"美國抗衡中國崛起",note:"111年申論題考拜登政府採取的內部抗衡與外部抗衡措施"},{context:"烏克蘭應對俄國干預",note:"113年申論題考烏克蘭在俄烏戰爭爆發前如何運用內部與外部平衡因應俄國威脅"}]},
   {id:"hegemonic-stability",title:"霸權穩定論",definition:"主張國際體系的穩定有賴於一個具備壓倒性實力的霸權國家存在——霸權需具備建構國際體系規則與機制的能力、執行這些規則的強烈意志、以及推動體系內主要國家互利互惠的承諾，才能維持體系穩定；霸權衰落或缺席時，體系容易陷入混亂。",applications:[{context:"112年選擇題",note:"考霸權穩定論定義霸權的必要條件——具建構機制能力、執行意志、推動互利承諾，但不包括發動戰爭的主動權"}],note:"可與馬賽克式／複合世界秩序對照理解——後者正是對本理論單一霸權前提的當代反思，主張後美國霸權時代秩序仍可能透過多元行為者互動維持"},
   {id:"soft-smart-power",title:"軟實力／巧實力",definition:"軟實力由奈伊提出，指透過吸引力（而非強制力）獲取他國認同、合作的能力，來源包括文化、價值觀、外交政策的正當性等；巧實力則是硬實力與軟實力的整合運用，透過同時操作兩者達成國家目標。",scholars:"奈伊（Joseph Nye，軟實力）；羅塞爾（Suzanne Nossel，巧權力）",applications:[{context:"111年選擇題",note:"考軟實力概念提出者為奈伊"},{context:"114年四等選擇題",note:"考軟實力最精確定義為非脅迫性的吸引力，且並非規範性排除負面用途的概念"}]},
   {id:"wendt-cultures",title:"溫特建構主義三種文化",definition:"溫特在《國際政治的社會理論》中，主張無政府狀態本身沒有固定性質，而是由國家間長期互動形塑出的社會建構結果，依國家間主要互動模式的不同，區分出三種文化：霍布斯文化（敵對零和，視彼此為敵人）、洛克文化（競爭但承認彼此生存權，視彼此為對手）、康德文化（合作友善，視彼此為朋友）。",scholars:"溫特（Alexander Wendt）",applications:[{context:"112年選擇題",note:"考俄烏戰爭較能反映霍布斯文化（敵對、零和的無政府體系文化）"}]},
-  {id:"multiplex-order",title:"馬賽克式／複合世界秩序",definition:"由阿查亞（Amitav Acharya）提出，主張後美國霸權時代的國際秩序既非單一霸權主導，也非傳統定義下的多極體系，而是像多廳影城（multiplex）般，眾多具影響力的行為者（大小國家、區域組織、企業、社會運動、非國家行為者）同時並存、各自在不同議題領域展開互動，形成複雜交織、無單一敘事主軸的碎片化／馬賽克式秩序。與傳統西洋棋盤式單一大國博弈的想像不同，複合秩序強調沒有任何單一或少數國家能夠獨自主導全球規則的制定與執行，需要G-Plus式的共享領導模式。",scholars:"阿查亞（Amitav Acharya）",applications:[{context:"全球南方（Global South）聲量崛起",note:"金磚國家（BRICS）擴大、東協等區域組織在無單一霸權主導下發揮更大自主性，都是複合秩序的具體體現"},{context:"美國自由主義霸權秩序式微",note:"阿查亞主張自由主義秩序從未真正是全球性秩序，而是特定西方陣營的規則體系，後美國時代呈現去中心化（decentered）特徵"}],note:"可與霸權穩定論對照理解——本概念正是對霸權穩定論假設（需要單一霸權才能維持秩序）的反思與挑戰，主張即使沒有明確霸權，複合秩序仍可能透過多元行為者互動維持相對穩定，是理解後霸權時代國際秩序如何運作的重要當代理論工具"}
+  {id:"multiplex-order",title:"馬賽克式／複合世界秩序",definition:"由阿查亞（Amitav Acharya）提出，主張後美國霸權時代的國際秩序既非單一霸權主導，也非傳統定義下的多極體系，而是像多廳影城（multiplex）般，眾多具影響力的行為者（大小國家、區域組織、企業、社會運動、非國家行為者）同時並存、各自在不同議題領域展開互動，形成複雜交織、無單一敘事主軸的碎片化／馬賽克式秩序。與傳統西洋棋盤式單一大國博弈的想像不同，複合秩序強調沒有任何單一或少數國家能夠獨自主導全球規則的制定與執行，需要G-Plus式的共享領導模式。",scholars:"阿查亞（Amitav Acharya）",applications:[{context:"全球南方（Global South）聲量崛起",note:"金磚國家（BRICS）擴大、東協等區域組織在無單一霸權主導下發揮更大自主性，都是複合秩序的具體體現"},{context:"美國自由主義霸權秩序式微",note:"阿查亞主張自由主義秩序從未真正是全球性秩序，而是特定西方陣營的規則體系，後美國時代呈現去中心化（decentered）特徵"}],note:"可與霸權穩定論對照理解——本概念正是對霸權穩定論假設（需要單一霸權才能維持秩序）的反思與挑戰，主張即使沒有明確霸權，複合秩序仍可能透過多元行為者互動維持相對穩定，是理解後霸權時代國際秩序如何運作的重要當代理論工具"},
+  {id:"democratic-peace",title:"民主和平論",definition:"主張民主國家彼此之間極少（甚至幾乎不曾）發生戰爭，因為民主制度內部的權力制衡、民意監督與決策透明度，使領導者較難輕易發動對外戰爭；共享的自由主義價值觀也降低民主國家之間彼此視對方為威脅的傾向。",scholars:"思想源頭可追溯至康德（Immanuel Kant）《永久和平論》中的共和政體理念",applications:[{context:"110年四等選擇題",note:"直接考民主和平論的思想奠基者為康德，而非洛克、馬基維利或俾斯麥"}]},
+  {id:"collective-security",title:"集體安全理論",definition:"主張透過建立涵蓋盡可能多國家的國際組織，當任一成員國遭受侵略時，其餘成員國共同以壓倒性的集體權力優勢對抗侵略者，形成嚇阻效果，藉此維護國際和平，是國際聯盟、聯合國等國際組織設計的核心理念基礎。",applications:[{context:"109年三等選擇題",note:"考集體安全理論的核心假設是以權力優勢對抗侵略者，而非權力平衡帶來和平（那是現實主義主張）"},{context:"110年四等選擇題",note:"考聯合國首次成功以集體安全名義出兵制止侵略的案例是韓戰，詳見[[modern|cold-war-crises|冷戰前期四大衝突]]事件卡"}],note:"與權力平衡理論的差異——集體安全依賴的是盡可能廣泛的集體成員共同對抗任何侵略者，不預設固定敵我陣營；權力平衡則是特定國家針對特定威脅來源組成抗衡聯盟，兩者的組織邏輯不同，考古題常考這個對比"},
+  {id:"human-security",title:"人類安全",definition:"跳脫傳統以國家為安全指涉對象的思維，主張安全的核心應是個人，涵蓋免於軍事威脅、免於疾病、確保基本人權、確保個人經濟生存條件等多重面向，強調安全問題不應只從軍事角度理解。",applications:[{context:"109年三等選擇題",note:"考人類安全概念涵蓋的面向，本題官方公告因選項爭議一律給分，顯示人類安全定義本身仍有學術討論空間"}]},
+  {id:"military-industrial-complex",title:"軍工複合體",definition:"指一國軍隊、政府官員與軍事工業公司之間，因政治經濟利益而形成的結構性共生關係——軍事工業公司遊說政府增加國防採購及軍事預算，政府官員與軍方則因產業利益與政治考量傾向支持擴大軍備，可能導致不必要的軍備競賽與武器擴散。",scholars:"艾森豪總統於卸任演說中首度警告美國公民注意軍工複合體的不利影響（不是甘迺迪）",applications:[{context:"110年四等選擇題",note:"考軍工複合體核心成員不包括一般市民利益團體"},{context:"114年四等選擇題",note:"考首先警告軍工複合體危害的是艾森豪而非甘迺迪，是常見人物誤植陷阱題"}]},
+  {id:"liberal-international-order",title:"自由國際秩序",definition:"指西方（尤其美國）學者用以描述二戰結束後、以經濟互賴、國際組織與民主政體為基礎所建立的世界秩序，強調規則導向、開放性與多邊主義。但此秩序是否真具全球普遍性備受質疑，許多非西方國家對其接受程度有限；現實主義學者米爾斯海默更直接主張，符合美國自身利益的其實是現實主義式的權力秩序，而非自由國際秩序。",scholars:"批評者：米爾斯海默（John Mearsheimer）",applications:[{context:"111年三等選擇題",note:"考自由國際秩序並非真正具有全球普遍性，這是常見的過度樂觀陷阱敘述"},{context:"109年申論題",note:"考自由國際秩序的基礎及其面臨的挑戰，並評述川普政府外交作為對其的影響"}],note:"可與馬賽克式／複合世界秩序對照理解——後者某種程度上正是對自由國際秩序全球普遍性假設的當代反思"},
+  {id:"globalization-debate",title:"全球化論述：超全球主義者vs懷疑論者",definition:"對全球化是否真正改變世界秩序，學界存在兩派對立觀點——超全球主義者傾向相信民族國家終將被超國家組織（如歐盟）取代、國界的重要性持續下降；懷疑論者則質疑全球化程度被誇大，主張民族國家不會真正衰退，當前經濟整合程度也未必真的超越過去（例如一戰前的全球化程度）。",applications:[{context:"111年三等選擇題",note:"考當前世界主要經濟體整合程度其實已較一戰前更高，是常考的事實查核題"},{context:"110年四等選擇題",note:"考全球化的獲益分配並不均等，全球普遍獲益的說法過於樂觀"}]},
+  {id:"sharp-power",title:"銳實力",definition:"指威權國家利用民主社會的開放性，透過散播假訊息、政治宣傳、滲透媒體與學術機構等非強制、隱蔽性手段，侵蝕民主社會對自身機制的信任、限制言論自由並扭曲公共意見，藉此擴大自身政治影響力，鎖定對象通常是政治菁英、媒體工作者、學者與其他意見領袖。",applications:[{context:"114年三等選擇題",note:"考銳實力並不涉及武力攻擊侵略等強制手段，其核心特徵正是非強制性、隱蔽性的滲透操作，這是常見的定義混淆陷阱"}],note:"可與軟實力／巧實力對照理解——軟實力訴諸正面吸引力，銳實力則利用開放社會的漏洞進行隱蔽操縱，兩者手段性質不同"},
+  {id:"mercantilism-vs-liberalism",title:"重商主義vs自由主義（國際政治經濟學兩大典範）",definition:"重商主義主張國家在世界經濟中應追求財富極大化與國家安全，將經濟視為國家權力工具，與其他國家的經濟關係本質上是零和競爭；自由主義（IPE）則主張自由貿易能為所有參與國帶來互利，國家應扮演市場秩序管理者角色而非直接介入資源分配，透過公平開放的市場競爭達成共同繁榮。",applications:[{context:"114年申論題",note:"考從分析單元、國際經濟關係本質、對貿易的看法及國家與市場關係等四個面向，比較重商主義與自由主義的差異，並說明近年重返重商主義的辯論"},{context:"113年三等選擇題",note:"考重商主義主張在世界經濟中國家應追求財富極大化與國家安全，而非自由貿易是強化經濟安全的最好方法"}]},
+  {id:"relative-absolute-gains",title:"相對利益vs絕對利益",definition:"描述國家評估國際合作成果時的兩種不同標準——絕對利益指只要自身獲益就願意合作，不在乎他國獲益多寡；相對利益則指國家會比較自己與他國的獲益差距，即使雙方都獲益，若對方獲益明顯較多，仍可能因擔憂權力差距擴大而拒絕合作。現實主義者常以國家在意相對利益批評新自由制度主義過度樂觀地假設國家只在意絕對利益。",applications:[{context:"110年申論題",note:"考從相對利益與絕對利益觀點，評析中國參與南海各方行為宣言協商過程中的國家利益認知轉變"},{context:"114年四等選擇題",note:"考現實主義對新自由制度論的典型批評之一，正是新自由制度論忽略相對利益問題"}]},
+  {id:"gray-zone-conflict",title:"灰色地帶衝突",definition:"指介於和平與正式戰爭之間的模糊地帶策略——行為者透過非傳統、模糊歸因、低於引發全面軍事對抗門檻的手段（如網路攻擊、資訊戰、海上民兵騷擾、經濟脅迫、法律戰等），逐步改變現狀或施加壓力，卻刻意避免升級為足以觸發對方正式軍事反應或國際集體介入的公開武裝衝突，是近年分析中國對台、對南海周邊國家行為模式時極常使用的分析框架。",applications:[{context:"當代台海與南海情勢分析",note:"中國對台灣的認知作戰、對周邊海域的海警船隻騷擾、經濟脅迫等行為，常被學者與媒體以灰色地帶衝突框架分析，是近年高度熱門的當代國際關係分析工具，雖非傳統考古題常客，但因高度貼近時事，建議留意"}]}
 ];
 
-var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史",modern:"現代國際關係"};
+var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史",modern:"現代國際關係",theory:"理論架構"};
 
-var state = { region:"all", index:0, tab:"narrative", sidebarOpen:false, openAccordion:"china" };
+var state = { region:"all", index:0, tab:"narrative", sidebarOpen:false, openAccordion:"china", quizMode:false, revealed:false };
 
 function esc(s){ return s.replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
 
 function parseInline(text){
-  return esc(text).replace(/\{\{(.*?)\}\}/g, function(m, term){
+  var out = esc(text).replace(/\{\{(.*?)\}\}/g, function(m, term){
     return '<span class="term" data-term="' + term + '">' + term + '</span>';
   });
+  out = out.replace(/\[\[([a-z]+)\|([a-z0-9-]+)\|(.*?)\]\]/g, function(m, region, id, label){
+    return '<span class="jumplink" data-jump="' + region + '|' + id + '">' + label + '</span>';
+  });
+  return out;
 }
 
 function filteredEvents(){
+  if (state.region === "theory") return THEORY_CARDS;
   return state.region === "all" ? EVENTS : EVENTS.filter(function(e){ return e.region === state.region; });
 }
 
@@ -440,7 +508,7 @@ function render(){
   var cur = list[state.index];
 
   var html = '';
-  html += '<div class="header-row"><button class="menu-btn" id="menu-btn">&#9776;</button><div class="header"><h1>近代外交史 · 卷宗</h1><p>外交特考讀書講義</p></div></div>';
+  html += '<div class="header-row"><button class="menu-btn" id="menu-btn">&#9776;</button><div class="header"><h1>近代外交史 · 卷宗</h1><p>外交特考讀書講義</p></div><button class="search-btn" id="search-btn">&#128269;</button></div>';
 
   html += '<div class="filters">';
   Object.keys(REGION_LABELS).forEach(function(r){
@@ -448,7 +516,36 @@ function render(){
   });
   html += '</div>';
 
-  if (cur){
+  html += '<div class="quiz-toggle"><button id="quiz-btn" class="' + (state.quizMode ? 'active' : '') + '">' + (state.quizMode ? '✓ 測驗模式（開）' : '測驗模式（關）') + '</button></div>';
+
+  var showFull = !state.quizMode || state.revealed;
+  if (cur && state.region === 'theory'){
+    html += '<div class="card">';
+    html += '<div class="period-tag">理論架構卡</div>';
+    html += '<div class="tag-light" style="border-color:var(--gold);color:var(--gold)">' + (cur.applications ? cur.applications.length : 0) + ' 個應用實例</div>';
+    html += '<div class="meta"><div class="title" style="margin-top:6px">' + esc(cur.title) + '</div></div>';
+    if (!showFull){
+      html += '<button class="reveal-btn" id="reveal-btn">翻面看定義與應用實例</button>';
+    } else {
+      html += '<div class="content">';
+      html += '<div class="light-block"><div class="light-label">核心定義</div>' + parseInline(cur.definition) + '</div>';
+      if (cur.scholars){
+        html += '<div class="light-block"><div class="light-label">代表學者</div>' + parseInline(cur.scholars) + '</div>';
+      }
+      if (cur.applications && cur.applications.length){
+        html += '<div class="light-block"><div class="light-label">應用實例</div>';
+        cur.applications.forEach(function(a){
+          html += '<div class="theory-block"><span class="theory-label">' + esc(a.context) + '</span>' + parseInline(a.note) + '</div>';
+        });
+        html += '</div>';
+      }
+      if (cur.note){
+        html += '<div style="padding:9px 11px;background:rgba(178,58,46,0.08);border-radius:6px;font-size:13px;color:var(--vermillion)">' + parseInline(cur.note) + '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  } else if (cur){
     html += '<div class="card">';
     html += '<div class="period-tag">' + esc(cur.period) + '</div>';
     if (cur.spec === 'core'){
@@ -458,7 +555,9 @@ function render(){
     }
     html += '<div class="meta"><div class="year">' + esc(cur.year) + '</div><div class="title">' + esc(cur.title) + '</div></div>';
 
-    if (cur.spec === 'core'){
+    if (!showFull){
+      html += '<button class="reveal-btn" id="reveal-btn">翻面看內容</button>';
+    } else if (cur.spec === 'core'){
       html += '<div class="tabs">';
       [["narrative","事件經過"],["knowledge","重要知識點"],["theory","理論詮釋"]].forEach(function(t){
         html += '<button class="' + (state.tab === t[0] ? 'active' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
@@ -522,7 +621,7 @@ function accordionTheory(){
   h += '<button class="acc-head' + (open ? ' open' : '') + '" data-acc="' + key + '"><span>理論架構卡</span><span class="arrow">›</span></button>';
   h += '<div class="acc-body' + (open ? ' open' : '') + '">';
   THEORY_CARDS.forEach(function(t){
-    h += '<div class="acc-row"><span class="ttl" data-theory="' + t.id + '">' + esc(t.title) + '</span></div>';
+    h += '<div class="acc-row"><span class="ttl" data-jump="theory|' + t.id + '">' + esc(t.title) + '</span></div>';
   });
   h += '</div></div>';
   return h;
@@ -562,11 +661,71 @@ function renderSidebar(){
 var touchStartX = 0, touchStartY = 0;
 
 function goPrev(){
-  if (state.index > 0){ state.index--; state.tab = 'narrative'; render(); }
+  if (state.index > 0){ state.index--; state.tab = 'narrative'; state.revealed = false; render(); }
 }
 function goNext(){
   var list = filteredEvents();
-  if (state.index < list.length - 1){ state.index++; state.tab = 'narrative'; render(); }
+  if (state.index < list.length - 1){ state.index++; state.tab = 'narrative'; state.revealed = false; render(); }
+}
+
+function snippetAround(text, query){
+  var idx = text.indexOf(query);
+  if (idx < 0) return text.slice(0, 60) + '…';
+  var start = Math.max(0, idx - 15);
+  var end = Math.min(text.length, idx + query.length + 30);
+  return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+}
+
+function renderSearchResults(query){
+  var box = document.getElementById('search-results');
+  query = (query || '').trim();
+  if (!query){
+    box.innerHTML = '<div class="search-empty">輸入關鍵字搜尋51個歷史事件、25張理論卡</div>';
+    return;
+  }
+  var results = [];
+  EVENTS.forEach(function(e){
+    var hay = e.title + ' ' + e.narrative + ' ' + (e.knowledge ? e.knowledge.join(' ') : '') + ' ' + (e.causal || '');
+    if (hay.indexOf(query) >= 0){
+      var typeLabel = {china:'中國史',west:'西洋史',eastasia:'東亞史',modern:'現代國際關係'}[e.region] || e.region;
+      results.push({type:typeLabel, title:e.title + '（' + e.year + '）', snippet:snippetAround(hay, query), region:e.region, id:e.id});
+    }
+  });
+  THEORY_CARDS.forEach(function(t){
+    var hay = t.title + ' ' + t.definition + ' ' + (t.scholars || '');
+    if (hay.indexOf(query) >= 0){
+      results.push({type:'理論架構', title:t.title, snippet:snippetAround(hay, query), region:'theory', id:t.id});
+    }
+  });
+  Object.keys(GLOSSARY).forEach(function(term){
+    if (term.indexOf(query) >= 0 || GLOSSARY[term].indexOf(query) >= 0){
+      results.push({type:'關鍵字', title:term, snippet:snippetAround(GLOSSARY[term], query), region:null, id:null, term:term});
+    }
+  });
+
+  if (!results.length){
+    box.innerHTML = '<div class="search-empty">沒有找到符合「' + esc(query) + '」的內容</div>';
+    return;
+  }
+  var h = '';
+  results.forEach(function(r){
+    h += '<div class="search-result-item" data-sr-region="' + (r.region || '') + '" data-sr-id="' + (r.id || '') + '" data-sr-term="' + (r.term || '') + '">';
+    h += '<div class="sr-type">' + esc(r.type) + '</div>';
+    h += '<div class="sr-title">' + esc(r.title) + '</div>';
+    h += '<div class="sr-snippet">' + esc(r.snippet) + '</div>';
+    h += '</div>';
+  });
+  box.innerHTML = h;
+  document.querySelectorAll('.search-result-item').forEach(function(el){
+    el.onclick = function(){
+      document.getElementById('search-panel').classList.remove('on');
+      if (el.dataset.srTerm){
+        openGlossary(el.dataset.srTerm);
+      } else {
+        jumpToEvent(el.dataset.srRegion, el.dataset.srId);
+      }
+    };
+  });
 }
 
 function jumpToEvent(region, id){
@@ -576,13 +735,14 @@ function jumpToEvent(region, id){
   state.index = idx >= 0 ? idx : 0;
   state.tab = 'narrative';
   state.sidebarOpen = false;
+  state.revealed = false;
   render();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function bindEvents(){
   document.querySelectorAll('[data-region]').forEach(function(b){
-    b.onclick = function(){ state.region = b.dataset.region; state.index = 0; state.tab = 'narrative'; render(); };
+    b.onclick = function(){ state.region = b.dataset.region; state.index = 0; state.tab = 'narrative'; state.revealed = false; render(); };
   });
   document.querySelectorAll('[data-tab]').forEach(function(b){
     b.onclick = function(){ state.tab = b.dataset.tab; render(); };
@@ -609,14 +769,6 @@ function bindEvents(){
   document.querySelectorAll('.term').forEach(function(t){
     t.onclick = function(){ openGlossary(t.dataset.term); };
   });
-  document.querySelectorAll('[data-theory]').forEach(function(t){
-    t.onclick = function(){
-      var id = t.dataset.theory;
-      state.sidebarOpen = false;
-      render();
-      openTheory(id);
-    };
-  });
   var menuBtn = document.getElementById('menu-btn');
   if (menuBtn) menuBtn.onclick = function(){ state.sidebarOpen = true; render(); };
   var sbOverlay = document.getElementById('sidebar-overlay');
@@ -633,6 +785,23 @@ function bindEvents(){
       jumpToEvent(parts[0], parts[1]);
     };
   });
+  var quizBtn = document.getElementById('quiz-btn');
+  if (quizBtn) quizBtn.onclick = function(){ state.quizMode = !state.quizMode; state.revealed = false; render(); };
+  var revealBtn = document.getElementById('reveal-btn');
+  if (revealBtn) revealBtn.onclick = function(){ state.revealed = true; render(); };
+  var searchBtn = document.getElementById('search-btn');
+  if (searchBtn) searchBtn.onclick = function(){
+    document.getElementById('search-panel').classList.add('on');
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results').innerHTML = '<div class="search-empty">輸入關鍵字搜尋51個歷史事件、25張理論卡</div>';
+    setTimeout(function(){ document.getElementById('search-input').focus(); }, 50);
+  };
+  var searchClose = document.getElementById('search-close');
+  if (searchClose) searchClose.onclick = function(){
+    document.getElementById('search-panel').classList.remove('on');
+  };
+  var searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.oninput = function(){ renderSearchResults(this.value); };
 
   var cardEl = document.querySelector('.card');
   if (cardEl){
