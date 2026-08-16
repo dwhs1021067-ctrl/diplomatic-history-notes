@@ -761,7 +761,7 @@ function bindEvents(){
     card.addEventListener('touchend', function(e){
       var dx = e.changedTouches[0].screenX - touchStartX;
       var dy = e.changedTouches[0].screenY - touchStartY;
-      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4){
+      if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.6){
         if (dx < 0) { goNext(); } else { goPrev(); }
       }
     }, {passive:true});
@@ -803,30 +803,6 @@ function bindEvents(){
   var searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.oninput = function(){ renderSearchResults(this.value); };
 
-  var cardEl = document.querySelector('.card');
-  if (cardEl){
-    var touchStartX = 0, touchStartY = 0, touchMoved = false;
-    cardEl.addEventListener('touchstart', function(e){
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchMoved = false;
-    }, {passive:true});
-    cardEl.addEventListener('touchmove', function(e){
-      touchMoved = true;
-    }, {passive:true});
-    cardEl.addEventListener('touchend', function(e){
-      if (!touchMoved) return;
-      var dx = e.changedTouches[0].clientX - touchStartX;
-      var dy = e.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
-      var list = filteredEvents();
-      if (dx < 0 && state.index < list.length - 1){
-        state.index++; state.tab = 'narrative'; render();
-      } else if (dx > 0 && state.index > 0){
-        state.index--; state.tab = 'narrative'; render();
-      }
-    }, {passive:true});
-  }
 }
 
 function openGlossary(term){
