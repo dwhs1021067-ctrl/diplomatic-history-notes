@@ -120,22 +120,32 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 .cmp-row .yr{color:var(--gold);font-weight:500;font-size:11.5px;margin-bottom:3px}
 .cmp-row .pair{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
 .cmp-row .pair span{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:var(--ink)}
-.tl-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 10px}
-.tl-tabs button{padding:5px 9px;border:1px solid var(--slate);border-radius:6px;background:transparent;font-size:11.5px;color:var(--ink);cursor:pointer;font-family:inherit}
+.tl-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+.tl-tabs button{padding:7px 11px;border:1px solid var(--slate);border-radius:8px;background:transparent;font-size:12.5px;color:var(--ink);cursor:pointer;font-family:inherit}
 .tl-tabs button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.tl-lane-label{font-size:11px;font-weight:600;color:var(--slate);margin:8px 0 4px}
-.tl-row{position:relative;height:30px;margin-bottom:3px}
-.tl-bar{position:absolute;top:2px;height:26px;border-radius:6px;padding:0 8px;display:flex;align-items:center;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;border:1px solid rgba(0,0,0,0.15)}
-.tl-bar.core.west{background:rgba(178,58,46,0.22);color:var(--vermillion)}
-.tl-bar.light.west{background:rgba(178,58,46,0.10);color:var(--vermillion)}
-.tl-bar.core.china{background:rgba(169,134,47,0.28);color:#7A5F1E}
-.tl-bar.light.china{background:rgba(169,134,47,0.13);color:#7A5F1E}
-.tl-axis{position:relative;height:16px;margin:4px 0 10px;border-top:1px solid var(--slate)}
-.tl-axis span{position:absolute;top:2px;font-size:10px;color:var(--slate);transform:translateX(-50%)}
-.tl-wrap{overflow-x:auto;padding-bottom:4px}
-.tl-inner{position:relative;min-width:560px}
-.tl-connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-.tl-note{font-size:11px;color:var(--slate);margin-top:6px;line-height:1.5}
+.tl-legend{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--slate);margin-bottom:10px}
+.tl-legend .tl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.tl-legend .tl-dot.west{background:var(--vermillion)}
+.tl-legend .tl-dot.china{background:var(--gold)}
+.tl-legend-note{margin-left:auto;font-size:11px}
+.tl-vwrap{position:relative;display:flex}
+.tl-vcol{position:relative;flex:1;min-width:0}
+.tl-vspine{width:80px;flex-shrink:0}
+.tl-vaxis{position:absolute;left:50%;top:0;bottom:0;width:80px;transform:translateX(-50%);pointer-events:none}
+.tl-vaxis span{position:absolute;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--slate);background:var(--paper);padding:1px 4px;border-radius:4px}
+.tl-bar2{position:absolute;left:0;right:0;border-radius:8px;padding:5px 8px;cursor:pointer;overflow:hidden;border:1px solid rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:center}
+.tl-bar2.core.west{background:rgba(178,58,46,0.24)}
+.tl-bar2.light.west{background:rgba(178,58,46,0.11)}
+.tl-bar2.core.china{background:rgba(169,134,47,0.30)}
+.tl-bar2.light.china{background:rgba(169,134,47,0.14)}
+.tl-bar2-yr{font-size:10px;color:var(--slate);font-weight:500;line-height:1.2}
+.tl-bar2-ttl{font-size:12px;color:var(--ink);font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tl-note{font-size:11.5px;color:var(--slate);margin-top:6px;line-height:1.5}
+.tl-links-note{margin-top:18px;padding:12px 13px;background:rgba(169,134,47,0.10);border-radius:10px}
+.tl-links-title{font-size:11.5px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.tl-link-item{font-size:12.5px;color:var(--ink);font-weight:500;margin-bottom:8px}
+.tl-link-item:last-child{margin-bottom:0}
+.tl-link-desc{font-size:11.5px;color:var(--slate);font-weight:400;margin-top:2px;line-height:1.5}
 .cmp-row .note{color:var(--slate);line-height:1.5}
 
 .card{
@@ -310,13 +320,17 @@ var EVENTS = [
     narrative:"1871年琉球宮古島漁民漂流至台灣南部，遭當地原住民殺害54人。日本以琉球為己藩屬為由向清廷交涉，清廷以「生番化外之地」回應。日本藉此於1874年出兵台灣南部，清廷透過英國調停，與日本簽訂《北京專約》，承認日本此次出兵為{{保民義舉}}，並付款換取日軍撤兵。此協議被日本解讀為清廷間接承認其對琉球的宗主權。1879年，日本正式廢琉球藩、改設沖繩縣，完全併吞琉球王國。",
     knowledge:["{{保民義舉}}字眼是關鍵外交陷阱——清廷原意只是賠款了事，卻被日本引申為承認宗主權轉移的法理依據","牡丹社事件是台灣近代化的直接催化劑：沈葆楨來台加強海防、推動開山撫番，並促成1885年台灣建省","琉球原為明清朝貢國，同時向日本薩摩藩納貢形成兩屬格局，1879年後兩屬體制終結","是甲午戰爭前20年中日在台灣、琉球、朝鮮的第一場正面角力"],
     theory:[{label:"現實主義",text:"最貼近考古題方向：日本利用清廷化外之地的模糊表態，精準操作國際法語言完成實質宗主權轉移。"},{label:"建構主義",text:"角度：琉球兩屬體制是朝貢體系彈性主權觀的產物，西方一國一主權體系傳入後此模糊狀態不可持續。"},{label:"國際公法",text:"角度：{{保民義舉}}承認可視為國際法上的默示承認，是研究外交辭令法律效力的經典教材。"},{label:"地緣政治",text:"角度：台灣、琉球、朝鮮構成日本大陸政策向外擴張的第一島鏈起點。"}]},
+  {id:"korea-rivalry",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"約1876–1887",title:"中日朝鮮半島權力競逐",spec:"core",
+    narrative:"1876年，日本仿效西方列強對日本自身的做法，以武力脅迫朝鮮簽訂《江華條約》，強迫朝鮮開港通商，條約中刻意宣稱「朝鮮為自主之邦，與日本國平等之權」，實質上是刻意否定清朝對朝鮮的傳統宗主權主張，為日後日本介入朝鮮埋下法理伏筆。清廷這時期外交策略也開始轉變——1882年，在李鴻章居中牽線下，朝鮮與美國簽訂《美朝條約》，李鴻章原本堅持要在條約中明文寫入朝鮮是中國屬邦的字句，最終雖未能完整寫入正式條款，但透過朝鮮國王照會美國總統的方式，間接確認了這層宗藩關係，是清廷首次嘗試用近代國際法語言（而非傳統朝貢框架）確認對朝鮮宗主權的重要嘗試。同年，朝鮮爆發壬午兵變（保守軍人反抗改革、攻擊日本使館），日本藉機出兵朝鮮，並脅迫朝鮮簽訂《濟物浦條約》，取得賠款及使館駐兵權；清廷則同時出兵朝鮮，平息事變並將大院君（兵變幕後支持者）擄至中國，展現清廷對朝鮮宗主權的實際軍事介入。1884年，親日的朝鮮開化黨在日本支持下發動政變（甲申事變），一度挾持國王、宣布改革，但駐朝清軍將領袁世凱迅速出兵鎮壓，短短三日即敉平政變，親日政權瓦解。事件後，中日雙方於1885年簽訂《天津協定》，約定雙方同時自朝鮮撤軍，日後若朝鮮有事需出兵須互相知會。同年，英國因憂心俄國藉朝鮮擴張勢力威脅其在遠東的利益，出兵佔領朝鮮外海的巨文島，直到1887年俄國承諾不佔領朝鮮領土後，英國才撤軍，是英俄大博弈延伸至朝鮮半島的具體案例。",
+    knowledge:["《江華條約》（1876）刻意宣稱朝鮮為自主之邦，是日本否定清朝對朝宗主權的關鍵法理鋪墊，與稍後美朝條約清廷嘗試確認宗主權的做法形成直接對抗","《美朝條約》（1882）李鴻章欲寫入屬邦字句未竟全功，改以朝鮮國王照會美國總統的間接方式確認宗藩關係，是清廷首次嘗試用近代國際法語言（而非傳統朝貢框架）處理屬國關係的重要嘗試","甲申事變由袁世凱率清軍三日敉平，展現清廷此時仍握有對朝鮮實際軍事介入的能力，與甲午戰爭時期江河日下的局面形成對比","中日天津協定（1885）的共同出兵權條款，十年後正是日本藉東學黨起義出兵朝鮮、進而引爆甲午戰爭的法理依據，兩者因果直接相連","巨文島事件（1885–87）是英俄大博弈延伸至朝鮮半島的具體案例，可與既有大賽局GLOSSARY詞條相互呼應"],
+    theory:[{label:"現實主義",text:"最貼近考古題方向：這十餘年間中日雙方在朝鮮半島的權力競逐，是傳統朝貢宗主權與近代條約體系兩套邏輯直接碰撞的縮影，日本步步進逼、清廷則交替使用軍事介入與國際法語言因應，最終仍在甲午戰爭中全面失守。"},{label:"建構主義",text:"角度：江華條約刻意使用「自主之邦」的用詞策略，展現條約文字本身如何被用作否定既有宗藩認同、建構新主權關係的工具，可與牡丹社事件的{{保民義舉}}用詞陷阱做對照。"},{label:"地緣政治",text:"角度：巨文島事件顯示朝鮮半島此時已成為英、俄、中、日四方勢力交會的地緣政治熱點，不只是中日兩國的競逐場域。"},{label:"外交史方法論",text:"角度：適合做20餘年權力競逐的整體因果鏈分析，與既有[[china|ryukyu|牡丹社事件與琉球問題]]共同構成112年三等第4題申論題（明治維新到甲午戰爭間中日在台灣、琉球、朝鮮半島的權力競逐）完整答題素材，最終於[[china|sino-japanese|甲午戰爭]]卡片高潮收尾。"}]},
   {id:"sino-french-war",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1884–1885",title:"中法越南戰爭",spec:"core",
     narrative:"越南長期為清朝傳統屬國，法國自19世紀中葉起逐步蠶食越南，同治年間已實際控制越南南部（交趾支那）及中部。1883年法國進一步壓迫越南簽訂《順化條約》，將越南納為保護國，直接挑戰清朝對越南的宗主權，中法關係急遽惡化。清廷內部對是否出兵援越意見分歧，最終決定出兵支援黑旗軍（劉永福率領的華人武裝力量）及清軍協同抵抗法軍。1884年，法國艦隊突襲福建馬尾軍港，重創新建的福建水師（{{馬尾海戰}}）；同年法軍進犯台灣，砲擊基隆並封鎖台灣海岸，時任台灣防務大臣劉銘傳指揮清軍在滬尾（淡水）擊退法軍登陸企圖，成功保住台灣本島未失守。1885年，清軍在廣西提督馮子材率領下於鎮南關大敗法軍（鎮南關大捷），法軍被迫撤退，是清廷難得的軍事勝利。然而，清廷在軍事佔優的情況下卻選擇議和（李鴻章主導），與法國簽訂《中法新約》（天津條約），承認法國對越南的保護權，越南自此脫離中國傳統朝貢體系，成為法屬印度支那的一部分。",
     knowledge:["同治年間法國已控制越南中南部，是理解中法戰爭爆發背景的重要時序基礎——常考的年代定位題","法國透過1862年、1874年兩次《西貢條約》逐步取得越南南部（交趾支那），第二次西貢條約更要求越南承認外交自主，是法國否定中國對越南宗主權法理基礎的關鍵前置步驟，直接鋪墊1883年順化條約與中法戰爭的爆發","{{馬尾海戰}}（1884）中，福建水師（自強運動海防成果之一）幾乎全軍覆沒，暴露自強運動海防建設的脆弱性","劉銘傳負責台灣防務、成功擊退法軍滬尾登陸，是台灣建省（1885）前的重要軍事貢獻，與牡丹社事件後沈葆楨的台灣近代化建設一脈相承","鎮南關大捷（馮子材，1885）是清廷對外戰爭中少數的軍事勝利，卻仍在「不敗而和」的情況下簽訂喪權條約，是理解晚清外交決策「軍事勝利不必然轉化為談判籌碼」的經典弔詭案例","《中法新約》承認法國保護越南，越南脫離中國朝貢體系，是繼琉球（1879）之後，清朝朝貢體系再失一藩的重要指標"],
     theory:[{label:"外交史方法論",text:"最貼近考古題方向：鎮南關大捷後清廷仍主動求和，展現決策者（李鴻章）個人的保守求穩心態（能動性層次）如何凌駕於戰場實際優勢（結構層次）之上，是分析「軍事勝利與外交談判籌碼未必成正比」的經典案例。"},{label:"現實主義",text:"角度：法國藉鄂圖曼式的「蠶食」策略逐步併吞越南，展現弱小屬國在強權環伺下難以維持傳統宗主保護關係的無力，也呼應了同期新帝國主義列強瓜分殖民地的整體時代背景。"},{label:"建構主義",text:"角度：清廷對越南的宗主權建立在朝貢體系的階序認知之上，而法國的保護國主張則是西方主權讓渡條約的邏輯，兩者對「宗主權」性質的認知落差，是朝貢體系與條約體系交界處的又一具體案例，可與牡丹社事件、琉球問題的分析框架相互呼應。"},{label:"比較政府與政治",text:"角度：福建水師在馬尾海戰的潰敗，可與北洋水師十年後在甲午戰爭的覆滅相互比較，兩者都暴露自強運動「重硬體購置、輕整體戰略協調與後勤訓練」的制度性缺陷。"}]}
 ,
   {id:"sino-japanese",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1894–1895",title:"甲午戰爭",spec:"core",
-    narrative:"朝鮮長期是清朝傳統屬國，1882年壬午兵變、1884年甲申政變已顯示日本勢力積極介入朝鮮內政。1894年朝鮮爆發東學黨起義，農民軍攻陷全州，朝鮮國王請求清廷依屬國體制出兵助剿。清廷依1885年《天津條約》知會日本後出兵，日本卻援引同一條約的共同出兵權，藉口保護僑民同時大舉派兵入朝，並在停戰後拒絕撤兵，反而強佔朝鮮王宮、扶植親日政權。1894豐島海戰、平壤之戰、黃海海戰，1895威海衛之戰北洋艦隊全滅，簽《馬關條約》。條約簽訂後，俄法德三國以干涉還遼為由聯合施壓，迫使日本歸還遼東半島，日本則獲清廷追加贖遼費3000萬兩補償；此舉直接誘發1897–98年列強競相劃分在華勢力範圍的熱潮。",
+    narrative:"朝鮮長期是清朝傳統屬國，1882年壬午兵變、1884年甲申政變已顯示日本勢力積極介入朝鮮內政（詳見[[china|korea-rivalry|中日朝鮮半島權力競逐]]事件卡）。1894年3月，甲申事變主謀金玉均在上海遭朝鮮政府派遣刺客暗殺身亡，清廷應朝鮮要求協助將其遺體運回朝鮮公開凌遲示眾，此舉激起日本國內強烈反清輿論、將金玉均塑造為改革烈士，是甲午戰爭爆發前夕日本國內主戰情緒高漲的催化劑之一。同年，朝鮮爆發東學黨起義，農民軍攻陷全州，朝鮮國王請求清廷依屬國體制出兵助剿。清廷依1885年《天津條約》知會日本後出兵，日本卻援引同一條約的共同出兵權，藉口保護僑民同時大舉派兵入朝，並在停戰後拒絕撤兵，反而強佔朝鮮王宮、扶植親日政權。1894豐島海戰、平壤之戰、黃海海戰，1895威海衛之戰北洋艦隊全滅，簽《馬關條約》。條約簽訂後，俄法德三國以干涉還遼為由聯合施壓，迫使日本歸還遼東半島，日本則獲清廷追加贖遼費3000萬兩補償；此舉直接誘發1897–98年列強競相劃分在華勢力範圍的熱潮。",
     knowledge:["1885年《天津條約》規定中日雙方出兵朝鮮須互相知會（共同出兵權）——日本正是利用此條款取得出兵朝鮮的法理依據","《馬關條約》：承認朝鮮獨立、割遼東半島/台灣/澎湖、賠款2億兩、開沙市重慶蘇州杭州、允許日本在華設廠（象徵{{資本輸出}}時代開始）","三國干涉還遼（1895）是甲午戰後到八國聯軍間關鍵過渡環節，直接連結1897–98瓜分勢力範圍熱潮","割台消息傳出後，台灣官紳為求自保、避免被日本視為清廷直接抵抗，於1895年5月宣布成立「{{台灣民主國}}」，推舉巡撫唐景崧為總統，然而唐景崧與大批官員在日軍登陸後迅即逃亡，抵抗實際由丘逢甲、劉永福等人領導的地方義勇軍持續至同年10月，最終不敵日軍優勢兵力而告終，台灣全島淪為日本殖民地直至1945年"],
     theory:[{label:"現實主義",text:"為最貼近考古題方向，尤其三國干涉還遼：日本挑戰東亞傳統中心構成權力轉移，三國干涉還遼為權力平衡教科書案例。"},{label:"民族主義",text:"角度：日本以戰勝完成國族建構驗收，中國戰敗則刺激知識菁英從天朝意識轉向民族危機意識。"},{label:"依賴理論／IPE",text:"角度：允許日本設廠象徵列強對華侵略由商品輸出轉向{{資本輸出}}，可嫁接列寧帝國主義論。"},{label:"比較政府與政治",text:"角度：可比較日本明治維新中央集權式現代化 vs 清朝洋務運動局部現代化的成果檢驗。"},{label:"外交史方法論",text:"角度：東學黨起義屬能動性層次的偶發導火線，清日對朝鮮宗主權的結構性競逐才是戰爭根本動因。"}]},
   {id:"sino-russian-secret",region:"china",period:"②條約體系深化與邊陲化期 1860–1901",year:"1896",title:"中俄密約",spec:"core",
@@ -593,7 +607,7 @@ var THEORY_CARDS = [
   {id:"gray-zone-conflict",title:"灰色地帶衝突",definition:"指介於和平與正式戰爭之間的模糊地帶策略——行為者透過非傳統、模糊歸因、低於引發全面軍事對抗門檻的手段（如網路攻擊、資訊戰、海上民兵騷擾、經濟脅迫、法律戰等），逐步改變現狀或施加壓力，卻刻意避免升級為足以觸發對方正式軍事反應或國際集體介入的公開武裝衝突，是近年分析中國對台、對南海周邊國家行為模式時極常使用的分析框架。",applications:[{context:"當代台海與南海情勢分析",note:"中國對台灣的認知作戰、對周邊海域的海警船隻騷擾、經濟脅迫等行為，常被學者與媒體以灰色地帶衝突框架分析，是近年高度熱門的當代國際關係分析工具，雖非傳統考古題常客，但因高度貼近時事，建議留意"}]}
 ];
 
-var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史",modern:"現代國際關係",theory:"理論架構"};
+var REGION_LABELS = {all:"全部",china:"中國史",west:"西洋史",eastasia:"東亞史",modern:"現代國際關係",theory:"理論架構",timeline:"時間軸"};
 
 var state = { region:"all", index:0, tab:"narrative", sidebarOpen:false, openAccordion:"china", quizMode:false, revealed:false, timelineTabIdx:1 };
 
@@ -629,6 +643,7 @@ function parseInline(text){
 
 function filteredEvents(){
   if (state.region === "theory") return THEORY_CARDS;
+  if (state.region === "timeline") return [];
   return state.region === "all" ? EVENTS : EVENTS.filter(function(e){ return e.region === state.region; });
 }
 
@@ -646,6 +661,14 @@ function render(){
     html += '<button class="' + (state.region === r ? 'active' : '') + '" data-region="' + r + '">' + REGION_LABELS[r] + '</button>';
   });
   html += '</div>';
+
+  if (state.region === 'timeline'){
+    html += renderTimelineView();
+    html += renderSidebar();
+    document.getElementById('app').innerHTML = html;
+    bindEvents();
+    return;
+  }
 
   html += '<div class="quiz-toggle"><button id="quiz-btn" class="' + (state.quizMode ? 'active' : '') + '">' + (state.quizMode ? '✓ 測驗模式（開）' : '測驗模式（關）') + '</button></div>';
 
@@ -758,24 +781,14 @@ function accordionTheory(){
   return h;
 }
 
-function accordionTimeline(){
-  var key = 'timeline';
-  var open = state.openAccordion === key;
-  var h = '<div class="acc-item">';
-  h += '<button class="acc-head' + (open ? ' open' : '') + '" data-acc="' + key + '"><span>中西時間軸對照</span><span class="arrow">›</span></button>';
-  h += '<div class="acc-body' + (open ? ' open' : '') + '">';
-  if (open) h += renderTimelineTab(state.timelineTabIdx);
-  h += '</div></div>';
-  return h;
-}
-
-function renderTimelineTab(tabIdx){
-  var tab = TIMELINE_TABS[tabIdx];
-  var h = '<div class="tl-tabs">';
+function renderTimelineView(){
+  var tab = TIMELINE_TABS[state.timelineTabIdx];
+  var html = '';
+  html += '<div class="tl-tabs">';
   TIMELINE_TABS.forEach(function(t, i){
-    h += '<button class="' + (i === tabIdx ? 'active' : '') + '" data-tltab="' + i + '">' + t.label + '</button>';
+    html += '<button class="' + (i === state.timelineTabIdx ? 'active' : '') + '" data-tltab="' + i + '">' + t.label + '</button>';
   });
-  h += '</div>';
+  html += '</div>';
 
   function collect(region){
     return EVENTS.filter(function(e){ return e.region === region; })
@@ -786,53 +799,67 @@ function renderTimelineTab(tabIdx){
   var west = collect('west');
   var china = collect('china');
 
-  var pxStart = 8, pxEnd = 552, minWidthPx = 26;
-  function xOf(y){
-    var yy = Math.max(tab.start, Math.min(tab.end, y));
-    return pxStart + (yy - tab.start) / (tab.end - tab.start) * (pxEnd - pxStart);
+  var pxPerYear = 15;
+  var span = Math.max(1, tab.end - tab.start);
+  var totalH = span * pxPerYear + 20;
+  var minBarH = 40;
+
+  function yOf(y){ return 10 + (Math.max(tab.start, Math.min(tab.end, y)) - tab.start) * pxPerYear; }
+
+  var centers = {};
+
+  function barsHtml(list, side){
+    var h = '';
+    list.forEach(function(x){
+      var y1 = yOf(x.r[0]);
+      var y2 = Math.max(yOf(x.r[1]), y1 + minBarH);
+      centers[side + '|' + x.e.id] = (y1 + y2) / 2;
+      h += '<div class="tl-bar2 ' + x.e.spec + ' ' + side + '" style="top:' + y1.toFixed(1) + 'px;height:' + (y2 - y1).toFixed(1) + 'px" data-jump="' + side + '|' + x.e.id + '">';
+      h += '<div class="tl-bar2-yr">' + esc(x.e.year) + '</div><div class="tl-bar2-ttl">' + esc(x.e.title) + '</div>';
+      h += '</div>';
+    });
+    return h;
   }
-  var rowCenters = {};
 
-  h += '<div class="tl-wrap"><div class="tl-inner">';
-
-  h += '<div class="tl-lane-label">西洋史</div>';
-  west.forEach(function(x, i){
-    var x1 = xOf(x.r[0]), x2 = Math.max(xOf(x.r[1]), x1 + minWidthPx);
-    var top = 2 + i * 30;
-    rowCenters['west|' + x.e.id] = top + 15;
-    h += '<div class="tl-row"><div class="tl-bar ' + x.e.spec + ' west" style="left:' + x1.toFixed(1) + 'px;width:' + (x2 - x1).toFixed(1) + 'px" data-jump="west|' + x.e.id + '">' + esc(x.e.title) + '</div></div>';
-  });
-  if (!west.length) h += '<div class="tl-note">此區間無收錄西洋史事件</div>';
-
-  h += '<div class="tl-axis">';
-  for (var yy = tab.start; yy <= tab.end; yy += Math.max(5, Math.round((tab.end - tab.start) / 6))){
-    h += '<span style="left:' + xOf(yy).toFixed(1) + 'px">' + yy + '</span>';
-  }
-  h += '</div>';
-
-  h += '<div class="tl-lane-label">中國史</div>';
-  china.forEach(function(x, i){
-    var x1 = xOf(x.r[0]), x2 = Math.max(xOf(x.r[1]), x1 + minWidthPx);
-    var top = 2 + i * 30;
-    rowCenters['china|' + x.e.id] = top + 15;
-    h += '<div class="tl-row"><div class="tl-bar ' + x.e.spec + ' china" style="left:' + x1.toFixed(1) + 'px;width:' + (x2 - x1).toFixed(1) + 'px" data-jump="china|' + x.e.id + '">' + esc(x.e.title) + '</div></div>';
-  });
-  if (!china.length) h += '<div class="tl-note">此區間無收錄中國史事件</div>';
-
-  h += '</div></div>';
+  var westHtml = barsHtml(west, 'west');
+  var chinaHtml = barsHtml(china, 'china');
 
   var links = COMPARISON.filter(function(c){
-    return rowCenters['west|' + c.westId] !== undefined && rowCenters['china|' + c.zhId] !== undefined;
+    return centers['west|' + c.westId] !== undefined && centers['china|' + c.zhId] !== undefined;
   });
-  if (links.length){
-    h += '<div class="tl-note"><strong style="color:var(--ink)">因果／平行對照：</strong><br>';
-    links.forEach(function(c){
-      h += '· ' + esc(c.zhLabel) + ' × ' + esc(c.westLabel) + '（' + esc(c.noteYear) + '）— ' + esc(c.note) + '<br>';
-    });
-    h += '</div>';
+  var connH = '';
+  links.forEach(function(c){
+    var yw = centers['west|' + c.westId], yc = centers['china|' + c.zhId];
+    connH += '<path d="M4 ' + yw.toFixed(1) + ' C 40 ' + yw.toFixed(1) + ', 40 ' + yc.toFixed(1) + ', 76 ' + yc.toFixed(1) + '" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    connH += '<circle cx="4" cy="' + yw.toFixed(1) + '" r="2.5" fill="var(--vermillion)"/>';
+    connH += '<circle cx="76" cy="' + yc.toFixed(1) + '" r="2.5" fill="var(--gold)"/>';
+  });
+
+  html += '<div class="tl-legend"><span><i class="tl-dot west"></i>西洋史</span><span><i class="tl-dot china"></i>中國史</span><span class="tl-legend-note">深色＝核心考點</span></div>';
+
+  html += '<div class="tl-vwrap" style="height:' + totalH.toFixed(0) + 'px">';
+  html += '<div class="tl-vcol west">' + westHtml + '</div>';
+  html += '<svg class="tl-vspine" viewBox="0 0 80 ' + totalH.toFixed(0) + '" preserveAspectRatio="none">' + connH + '</svg>';
+  html += '<div class="tl-vaxis">';
+  var step = Math.max(5, Math.round(span / 8 / 5) * 5);
+  for (var yy = tab.start; yy <= tab.end; yy += step){
+    html += '<span style="top:' + yOf(yy).toFixed(1) + 'px">' + yy + '</span>';
   }
-  h += '<div class="tl-note">長條寬度＝事件持續時間；深色＝核心考點，淺色＝補充脈絡；點擊長條可跳轉詳細內容</div>';
-  return h;
+  html += '</div>';
+  html += '<div class="tl-vcol china">' + chinaHtml + '</div>';
+  html += '</div>';
+
+  if (!west.length && !china.length){
+    html += '<div class="tl-note" style="text-align:center;padding:24px 0">此區間目前尚無收錄事件</div>';
+  }
+  if (links.length){
+    html += '<div class="tl-links-note"><div class="tl-links-title">因果／平行對照</div>';
+    links.forEach(function(c){
+      html += '<div class="tl-link-item">' + esc(c.zhLabel) + ' × ' + esc(c.westLabel) + '（' + esc(c.noteYear) + '）<div class="tl-link-desc">' + esc(c.note) + '</div></div>';
+    });
+    html += '</div>';
+  }
+  return html;
 }
 
 function accordionCompare(){
@@ -861,7 +888,7 @@ function renderSidebar(){
   h += accordionSection('west', '近代西洋外交史', 'west');
   h += accordionSection('modern-events', '現代國際關係史', 'modern');
   h += accordionTheory();
-  h += accordionTimeline();
+  h += accordionCompare();
   h += '</div></div>';
   return h;
 }
