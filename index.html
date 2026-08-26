@@ -128,21 +128,18 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 .tl-legend .tl-dot.west{background:var(--vermillion)}
 .tl-legend .tl-dot.china{background:var(--gold)}
 .tl-legend-note{margin-left:auto;font-size:10.5px}
-.tl-2col{display:flex;gap:8px;align-items:flex-start}
-.tl-vcol2{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
-.tl-col-head{font-size:11.5px;font-weight:600;color:var(--paper);padding:4px 0;text-align:center;border-radius:6px;margin-bottom:2px;position:sticky;top:0;z-index:3}
-.tl-col-head.west{background:var(--vermillion)}
-.tl-col-head.china{background:var(--gold)}
-.tl-item{border-radius:9px;padding:8px 9px;cursor:pointer;border:1px solid rgba(0,0,0,0.12)}
-.tl-item.core.west{background:rgba(178,58,46,0.24)}
-.tl-item.light.west{background:rgba(178,58,46,0.10)}
-.tl-item.core.china{background:rgba(169,134,47,0.30)}
-.tl-item.light.china{background:rgba(169,134,47,0.13)}
-.tl-item-yr{font-size:10px;color:var(--slate);font-weight:600;margin-bottom:2px}
-.tl-item-ttl{font-size:12.5px;color:var(--ink);font-weight:500;line-height:1.4;word-break:break-word}
-.tl-item-dur{margin-top:6px;height:4px;background:rgba(0,0,0,0.08);border-radius:2px;overflow:hidden}
-.tl-item.west .tl-item-dur span{display:block;height:100%;background:var(--vermillion);border-radius:2px}
-.tl-item.china .tl-item-dur span{display:block;height:100%;background:var(--gold);border-radius:2px}
+.tl-vwrap{position:relative;display:flex}
+.tl-vcol{position:relative;flex:1;min-width:0;overflow-x:auto;overflow-y:hidden}
+.tl-vcol-inner{position:relative;height:100%}
+.tl-vaxis{position:relative;width:38px;flex-shrink:0}
+.tl-vaxis span{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);font-size:9.5px;color:var(--slate);background:var(--paper);padding:1px 3px;border-radius:3px;white-space:nowrap}
+.tl-bar2{position:absolute;box-sizing:border-box;border-radius:7px;padding:4px 6px;cursor:pointer;overflow:hidden;border:1px solid rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:center}
+.tl-bar2.core.west{background:rgba(178,58,46,0.28)}
+.tl-bar2.light.west{background:rgba(178,58,46,0.13)}
+.tl-bar2.core.china{background:rgba(169,134,47,0.34)}
+.tl-bar2.light.china{background:rgba(169,134,47,0.16)}
+.tl-bar2-yr{font-size:9px;color:var(--slate);font-weight:600;line-height:1.15;margin-bottom:1px}
+.tl-bar2-ttl{font-size:11px;color:var(--ink);font-weight:500;line-height:1.25;word-break:break-word}
 .tl-note{font-size:11.5px;color:var(--slate);margin-top:6px;line-height:1.5}
 .tl-links-note{margin-top:18px;padding:12px 13px;background:rgba(169,134,47,0.10);border-radius:10px}
 .tl-links-title{font-size:11.5px;font-weight:600;color:var(--gold);margin-bottom:8px}
@@ -797,42 +794,107 @@ function renderTimelineView(){
     return EVENTS.filter(function(e){ return e.region === region; })
       .map(function(e){ return { e:e, r:parseYears(e.year) }; })
       .filter(function(x){ return x.r[0] !== null && x.r[1] >= tab.start && x.r[0] <= tab.end; })
-      .sort(function(a,b){ return a.r[0] - b.r[0] || (a.r[1]-a.r[0]) - (b.r[1]-b.r[0]); });
+      .sort(function(a,b){ return a.r[0] - b.r[0]; });
   }
   var west = collect('west');
   var china = collect('china');
-  var maxDur = 1;
-  west.concat(china).forEach(function(x){ maxDur = Math.max(maxDur, x.r[1] - x.r[0]); });
 
-  function itemsHtml(list, side){
-    var h = '';
-    list.forEach(function(x){
-      var dur = x.r[1] - x.r[0];
-      var durPct = Math.max(6, Math.round(dur / maxDur * 100));
-      h += '<div class="tl-item ' + x.e.spec + ' ' + side + '" data-jump="' + side + '|' + x.e.id + '">';
-      h += '<div class="tl-item-yr">' + esc(x.e.year) + '</div>';
-      h += '<div class="tl-item-ttl">' + esc(x.e.title) + '</div>';
-      h += '<div class="tl-item-dur"><span style="width:' + durPct + '%"></span></div>';
-      h += '</div>';
-    });
-    if (!list.length) h += '<div class="tl-note" style="padding:10px 0">此區間尚無收錄事件</div>';
-    return h;
+  var pxPerYear = 30;
+  var span = Math.max(1, tab.end - tab.start);
+  var laneWidthPx = 175;
+  var yearLabelH = 13, lineH = 14.5, padV = 10, minH = 30;
+  var MIN_COL_PX = 42;
+
+  function yOf(y){ return (Math.max(tab.start, Math.min(tab.end, y)) - tab.start) * pxPerYear; }
+
+  function estimateHeight(title, numCols){
+    var colWidth = laneWidthPx / numCols;
+    var charsPerLine = Math.max(3, Math.floor(colWidth / 13));
+    var lines = Math.max(1, Math.ceil(title.length / charsPerLine));
+    return yearLabelH + lines * lineH + padV;
   }
 
-  html += '<div class="tl-legend"><span><i class="tl-dot west"></i>西洋史</span><span><i class="tl-dot china"></i>中國史</span><span class="tl-legend-note">深色＝核心考點｜長度指示條＝相對持續時間</span></div>';
+  function layout(list){
+    var numCols = 1;
+    var finalItems = null;
+    for (var pass = 0; pass < 6; pass++){
+      var items = list.map(function(x){
+        var y1 = yOf(x.r[0]);
+        var naturalH = (x.r[1] - x.r[0]) * pxPerYear;
+        var textH = estimateHeight(x.e.title, numCols);
+        var h = Math.max(naturalH, textH, minH);
+        return { x:x, y1:y1, y2:y1 + h, h:h };
+      });
+      items.sort(function(a,b){ return a.y1 - b.y1; });
+      var colEnds = [];
+      items.forEach(function(it){
+        var placed = false;
+        for (var i = 0; i < colEnds.length; i++){
+          if (colEnds[i] <= it.y1 + 0.5){
+            colEnds[i] = it.y2;
+            it.col = i;
+            placed = true;
+            break;
+          }
+        }
+        if (!placed){
+          colEnds.push(it.y2);
+          it.col = colEnds.length - 1;
+        }
+      });
+      var neededCols = colEnds.length;
+      if (neededCols <= numCols || pass === 5){
+        finalItems = items;
+        numCols = Math.max(numCols, neededCols);
+        break;
+      }
+      numCols = neededCols;
+    }
+    return { items:finalItems, numCols:numCols };
+  }
 
-  html += '<div class="tl-2col">';
-  html += '<div class="tl-vcol2"><div class="tl-col-head west">西洋史</div>' + itemsHtml(west, 'west') + '</div>';
-  html += '<div class="tl-vcol2"><div class="tl-col-head china">中國史</div>' + itemsHtml(china, 'china') + '</div>';
+  var westL = layout(west);
+  var chinaL = layout(china);
+  var westMaxY = 0, chinaMaxY = 0;
+  westL.items.forEach(function(it){ westMaxY = Math.max(westMaxY, it.y2); });
+  chinaL.items.forEach(function(it){ chinaMaxY = Math.max(chinaMaxY, it.y2); });
+  var totalH = Math.max(westMaxY, chinaMaxY, span * pxPerYear) + 14;
+
+  function barsHtml(layoutResult, side){
+    var h = '';
+    var n = layoutResult.numCols;
+    layoutResult.items.forEach(function(it){
+      var wPct = 100 / n;
+      var leftPct = it.col * wPct;
+      h += '<div class="tl-bar2 ' + it.x.e.spec + ' ' + side + '" style="top:' + it.y1.toFixed(1) + 'px;height:' + it.h.toFixed(1) + 'px;left:' + leftPct.toFixed(2) + '%;width:calc(' + wPct.toFixed(2) + '% - 3px)" data-jump="' + side + '|' + it.x.e.id + '">';
+      h += '<div class="tl-bar2-yr">' + esc(it.x.e.year) + '</div><div class="tl-bar2-ttl">' + esc(it.x.e.title) + '</div>';
+      h += '</div>';
+    });
+    if (!layoutResult.items.length) return '<div class="tl-note">此區間尚無收錄事件</div>';
+    var minW = layoutResult.numCols * MIN_COL_PX;
+    return '<div class="tl-vcol-inner" style="min-width:' + minW + 'px">' + h + '</div>';
+  }
+
+  html += '<div class="tl-legend"><span><i class="tl-dot west"></i>西洋史</span><span><i class="tl-dot china"></i>中國史</span><span class="tl-legend-note">深色＝核心考點</span></div>';
+
+  html += '<div class="tl-vwrap" style="height:' + totalH.toFixed(0) + 'px">';
+  html += '<div class="tl-vcol">' + barsHtml(westL, 'west') + '</div>';
+  html += '<div class="tl-vaxis">';
+  var step = Math.max(2, Math.round(span / 10));
+  for (var yy = tab.start; yy <= tab.end; yy += step){
+    html += '<span style="top:' + yOf(yy).toFixed(1) + 'px">' + yy + '</span>';
+  }
+  html += '</div>';
+  html += '<div class="tl-vcol">' + barsHtml(chinaL, 'china') + '</div>';
   html += '</div>';
 
-  var chinaIds = {}; china.forEach(function(x){ chinaIds[x.e.id] = true; });
   var westIds = {}; west.forEach(function(x){ westIds[x.e.id] = true; });
+  var chinaIds = {}; china.forEach(function(x){ chinaIds[x.e.id] = true; });
   var links = COMPARISON.filter(function(c){ return westIds[c.westId] && chinaIds[c.zhId]; });
   if (links.length){
     html += '<div class="tl-links-note"><div class="tl-links-title">因果／平行對照</div>';
     links.forEach(function(c){
-      html += '<div class="tl-link-item" data-jumpw="' + c.westId + '" data-jumpc="' + c.zhId + '">' + esc(c.zhLabel) + ' × ' + esc(c.westLabel) + '（' + esc(c.noteYear) + '）<div class="tl-link-desc">' + esc(c.note) + '</div></div>';
+      html += '<div class="tl-link-item">' + esc(c.zhLabel) + ' × ' + esc(c.westLabel) + '（' + esc(c.noteYear) + '）<div class="tl-link-desc">' + esc(c.note) + '</div></div>';
     });
     html += '</div>';
   }
